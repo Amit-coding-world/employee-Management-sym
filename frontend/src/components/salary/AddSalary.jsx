@@ -40,7 +40,7 @@ const AddSalary = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/salary/add`,
+        `https://employee-management-system-sbvn.onrender.com/api/salary/add`,
         salary,
         {
           headers: {

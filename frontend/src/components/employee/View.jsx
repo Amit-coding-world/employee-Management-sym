@@ -12,7 +12,7 @@ const View = () => {
     const fetchEmployee = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/employee/${id}`,
+          `https://employee-management-system-sbvn.onrender.com/api/employee/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -60,7 +60,7 @@ const View = () => {
         {/* Left: Profile Image */}
         <div className="flex-shrink-0 mx-auto md:mx-0">
           <img
-            src={`http://localhost:5000/${employee?.userId?.profileImage}`}
+            src={`https://employee-management-system-sbvn.onrender.com/${employee?.userId?.profileImage}`}
             alt={employee?.userId?.name || "Employee"}
             className="rounded-full border w-48 md:w-64"
           />

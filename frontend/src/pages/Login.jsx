@@ -14,7 +14,7 @@ const Login = () => {
         
         e.preventDefault();
         try {
-            const response= await axios.post("http://localhost:5000/api/auth/login",{email, password});
+            const response= await axios.post("https://employee-management-system-sbvn.onrender.com/api/auth/login",{email, password});
             if(response.data.success){
               login(response.data.user)
               localStorage.setItem("token", response.data.token);

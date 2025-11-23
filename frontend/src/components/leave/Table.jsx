@@ -13,7 +13,7 @@ const Table = () => {
   const fetchLeaves = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:5000/api/leave", {
+      const response = await axios.get("https://employee-management-system-sbvn.onrender.com/api/leave", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

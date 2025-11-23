@@ -28,7 +28,7 @@ const Setting = () => {
 
     try {
       const response = await axios.put(
-        "http://localhost:5000/api/setting/change-password",
+        "https://employee-management-system-sbvn.onrender.com/api/setting/change-password",
         {
           userId: setting.userId,
           oldPassword: setting.oldPassword,

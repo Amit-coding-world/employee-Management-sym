@@ -12,7 +12,7 @@ export const AttendanceHelper = ({ status, employeeId, statusChange }) => {
   const markEmployee = async (status, employeeId) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/attendance/update/${employeeId}`,
+        `https://employee-management-system-sbvn.onrender.com/api/attendance/update/${employeeId}`,
         { status },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );

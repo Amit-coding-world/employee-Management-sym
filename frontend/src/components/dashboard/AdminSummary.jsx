@@ -17,7 +17,7 @@ const AdminSummary = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/dashboard/summary", {
+        const res = await axios.get("https://employee-management-system-sbvn.onrender.com/api/dashboard/summary", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

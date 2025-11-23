@@ -13,7 +13,7 @@ const Detail = () => {
     const fetchLeave = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/leave/detail/${id}`,
+          `https://employee-management-system-sbvn.onrender.com/api/leave/detail/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -39,7 +39,7 @@ const Detail = () => {
     setUpdating(true);
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/leave/${id}`,
+        `https://employee-management-system-sbvn.onrender.com/api/leave/${id}`,
         { status },
         {
           headers: {
@@ -86,7 +86,7 @@ const Detail = () => {
         {/* Left: Profile Image */}
         <div className="flex-shrink-0 mx-auto md:mx-0">
           <img
-            src={`http://localhost:5000/${leave?.employeeId?.userId?.profileImage}`}
+            src={`https://employee-management-system-sbvn.onrender.com/${leave?.employeeId?.userId?.profileImage}`}
             className="rounded-full border w-48 md:w-64"
             alt={leave?.employeeId?.userId?.name || "Profile"}
           />

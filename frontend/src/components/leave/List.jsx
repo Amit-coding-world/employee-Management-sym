@@ -16,7 +16,7 @@ const List = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/leave/${id}/${user.role}`,
+        `https://employee-management-system-sbvn.onrender.com/api/leave/${id}/${user.role}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }

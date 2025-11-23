@@ -20,7 +20,7 @@ const AddDepartment = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/department/add",
+        "https://employee-management-system-sbvn.onrender.com/api/department/add",
         department,
         {
           headers: {
