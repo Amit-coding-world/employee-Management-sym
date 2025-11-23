@@ -35,4 +35,57 @@ path	Node.js core module for handling and transforming file paths. No need to in
 
 mongo db on server  for create and connect is :-
 
-. node --env-file=.env userSeed.js
+<!-- 
+npm run start -both togather
+
+"scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm run start --prefix backend"
+  }
+
+npm run dev - backend
+
+NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+  app.get('/:path(*)', (_, res) => {
+    res.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'));
+  });}
+
+// for cors
+  app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+
+  "scripts": {
+    "dev": "nodemon backend/index.js",
+    "start": "nodemon backend/index.js"
+  }
+
+
+npm run dev - frontend
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+"scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  } -->
+
+
+
