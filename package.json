@@ -1,0 +1,25 @@
+{
+  "name": "employee-management-system",
+  "version": "1.0.0",
+  "description": "Employee Management System with React frontend and Express/Mongo backend",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm run start --prefix backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amit-coding-world/Employee-Management-System.git"
+  },
+  "keywords": ["employee", "management", "system", "react", "express", "mongodb"],
+  "author": "Amit",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Amit-coding-world/Employee-Management-System/issues"
+  },
+  "homepage": "https://github.com/Amit-coding-world/Employee-Management-System#readme",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
