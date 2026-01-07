@@ -25,14 +25,24 @@ const Navbar = () => {
                                         }`
                                     }
                                     alt="Profile"
-                                    className="w-8 h-8 rounded-full border border-white"/>
-                            ) : (
-                                <div className="w-8 h-8 rounded-full bg-teal-800 flex items-center justify-center border border-white">
-                                    {
-                                    user ?. name ?. charAt(0).toUpperCase()
-                                } </div>
-                            )
+                                    className="w-8 h-8 rounded-full border border-white object-cover"
+                                    onError={
+                                        (e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'flex';
+                                        }
+                                    }/>
+                            ) : null
                         }
+                            <div className="w-8 h-8 rounded-full bg-teal-800 flex items-center justify-center border border-white"
+                                style={
+                                    {
+                                        display: user ?. profileImage ? 'none' : 'flex'
+                                    }
+                            }>
+                                {
+                                user ?. name ?. charAt(0).toUpperCase()
+                            } </div>
                             <span className="hidden sm:inline text-sm">
                                 Welcome, {
                                 user ?. name
