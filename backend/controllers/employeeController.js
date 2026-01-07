@@ -32,13 +32,33 @@ const addEmployee = async (req, res) => {
 
     const hashPassword = await bcrypt.hash(password, 10);
 
+
+    // Debug log for file upload
+    console.log('Uploaded file:', req.file);
+
+    // Ensure Cloudinary URL is present
+    let profileImageUrl = '';
+    if (req.file && req.file.path) {
+      profileImageUrl = req.file.path;
+    } else if (req.file && req.file.url) {
+      profileImageUrl = req.file.url;
+    } else {
+      // If no file uploaded, you can set a default image URL or return an error
+      profileImageUrl = '';
+      // Optionally, return error if image is required
+      // return res.status(400).json({ success: false, error: 'Image upload failed' });
+    }
+
     const newUser = new User({
       name,
       email,
       password: hashPassword,
       role,
-      profileImage: req.file ? req.file.path : "",
+      profileImage: profileImageUrl,
     });
+
+    // Debug log for profileImage value
+    console.log('Profile image URL to save:', profileImageUrl);
 
     const savedUser = await newUser.save();
 
