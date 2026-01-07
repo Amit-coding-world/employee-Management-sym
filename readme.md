@@ -108,10 +108,6 @@ cd frontend
 npm run dev
 ```
 
-## � Credentials (Demo)
-
-*   **Admin:** `admin@gmail.com` / `admin`
-*   **User:** `amit@gmail.com` / `123456`
 
 ## 🌐 Live URL
 [https://employee-management-system-sbvn.onrender.com](https://employee-management-system-sbvn.onrender.com)
