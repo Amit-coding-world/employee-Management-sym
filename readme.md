@@ -170,5 +170,4 @@ export default {
 
 ### URL=https://employee-management-system-sbvn.onrender.com
 
-<!-- admin name:- admin@gmail.com password:- admin -->
-<!-- user name:- amit@gmail.com password:- 123456 -->
+
