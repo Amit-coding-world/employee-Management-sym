@@ -111,8 +111,6 @@ npm run dev
 ## 🤝 Contributing
 Contributions are welcome! Feel free to fork the repository and submit a pull request with your improvements.
 
-## 📄 License
-This project is licensed under the ISC License.
 
 
 mongo db on server  for create and connect is :-
@@ -171,3 +169,6 @@ export default {
 
 
 ### URL=https://employee-management-system-sbvn.onrender.com
+
+<!-- admin name:- admin@gmail.com password:- admin -->
+<!-- user name:- amit@gmail.com password:- 123456 -->

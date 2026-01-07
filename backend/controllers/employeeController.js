@@ -1,20 +1,11 @@
 import Employee from "../models/Employee.js";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
-import multer from "multer";
-import path from "path";
+import upload from "../middleware/cloudinaryUpload.js";
 import Department from '../models/Department.js'
 import { error } from "console";
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/uploads");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-const upload = multer({ storage: storage });
+
 
 const addEmployee = async (req, res) => {
   try {
@@ -46,7 +37,7 @@ const addEmployee = async (req, res) => {
       email,
       password: hashPassword,
       role,
-      profileImage: req.file ? req.file.filename : "",
+      profileImage: req.file ? req.file.path : "",
     });
 
     const savedUser = await newUser.save();
@@ -135,4 +126,4 @@ const fetchEmployeesByDepId= async(req,res)=>{
   }
 }
 
-export { addEmployee, upload,getEmployees,getEmployee,updateEmployee,fetchEmployeesByDepId };
+export { addEmployee, upload, getEmployees, getEmployee, updateEmployee, fetchEmployeesByDepId };

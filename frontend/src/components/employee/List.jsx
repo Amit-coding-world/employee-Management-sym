@@ -30,7 +30,7 @@ const List = () => {
               <img
                 width={40}
                 className="rounded-full"
-                src={`https://employee-management-system-sbvn.onrender.com/${emp?.userId?.profileImage}`}
+                src={emp?.userId?.profileImage}
                 alt={emp?.userId?.name || "Employee"}
               />
             ),

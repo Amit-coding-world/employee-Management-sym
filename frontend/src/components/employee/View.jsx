@@ -60,7 +60,7 @@ const View = () => {
         {/* Left: Profile Image */}
         <div className="flex-shrink-0 mx-auto md:mx-0">
           <img
-            src={`https://employee-management-system-sbvn.onrender.com/${employee?.userId?.profileImage}`}
+            src={employee?.userId?.profileImage}
             alt={employee?.userId?.name || "Employee"}
             className="rounded-full border w-48 md:w-64"
           />
