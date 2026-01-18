@@ -3,7 +3,6 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import upload from "../middleware/cloudinaryUpload.js";
 import Department from '../models/Department.js'
-import {error} from "console";
 
 
 const addEmployee = async (req, res) => {
@@ -90,7 +89,7 @@ const getEmployee = async (req, res) => {
     const {id} = req.params;
     try {
         let employee;
-        employee = await Employee.findById({_id: id}).populate('userId', {password: 0}).populate("department");
+        employee = await Employee.findById(id).populate('userId', {password: 0}).populate("department");
 
         if (! employee) {
             employee = await Employee.findOne({userId: id}).populate('userId', {password: 0}).populate("department");
@@ -108,6 +107,10 @@ const getEmployee = async (req, res) => {
 const updateEmployee = async (req, res) => {
     try {
         const {id} = req.params;
+        console.log('Update Employee ID:', id);
+        console.log('Update Request Body:', req.body);
+        console.log('Update Request File:', req.file);
+
         const {
             name,
             maritalStatus,
@@ -116,11 +119,11 @@ const updateEmployee = async (req, res) => {
             salary
         } = req.body;
 
-        const employee = await Employee.findById({_id: id});
+        const employee = await Employee.findById(id);
         if (! employee) {
             return res.status(404).json({success: false, error: "employee not found"});
         }
-        const user = await User.findById({_id: employee.userId});
+        const user = await User.findById(employee.userId);
         if (! user) {
             return res.status(404).json({success: false, error: "user not found"});
         }
@@ -132,21 +135,27 @@ const updateEmployee = async (req, res) => {
             profileImageUrl = req.file.url;
         }
 
-        const updateUser = await User.findByIdAndUpdate({
-            _id: employee.userId
-        }, {name, profileImage: profileImageUrl})
-        const updateEmployee = await Employee.findByIdAndUpdate({
-            _id: id
-        }, {maritalStatus, designation, salary, department})
-        if (! updateEmployee || ! updateUser) {
-            return res.status(404).json({success: false, error: "document  not found"});
+        const updatedUser = await User.findByIdAndUpdate(employee.userId, {
+            name,
+            profileImage: profileImageUrl
+        }, {new: true})
+        const updatedEmployee = await Employee.findByIdAndUpdate(id, {
+            maritalStatus,
+            designation,
+            salary,
+            department
+        }, {new: true})
+
+        if (! updatedEmployee || ! updatedUser) {
+            return res.status(404).json({success: false, error: "document not found"});
         }
         return res.status(200).json({success: true, message: "employee update"});
+
+
     } catch (error) {
         return res.status(500).json({success: false, error: "update employees server error"})
     }
 }
-
 const fetchEmployeesByDepId = async (req, res) => {
     const {id} = req.params;
     try {
@@ -159,7 +168,6 @@ const fetchEmployeesByDepId = async (req, res) => {
         });
     }
 }
-
 export {
     addEmployee,
     upload,
