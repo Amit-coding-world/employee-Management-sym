@@ -1,5 +1,5 @@
 import Sidebar from "../components/EmployeeDashboard/Sidebar";
-import { Outlet } from "react-router-dom";
+import { Outlet} from "react-router-dom";
 import Navbar from "../components/dashboard/Navbar.jsx";
 
 const EmployeeDashboard = () => {
@@ -16,7 +16,6 @@ const EmployeeDashboard = () => {
         </main>
       </div>
     </div>
-  );
-};
+  );};
 
 export default EmployeeDashboard;

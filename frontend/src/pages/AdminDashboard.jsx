@@ -1,10 +1,10 @@
-import { useAuth } from "../context/authContext";
+import { useAuth} from "../context/authContext";
 import AdminSidebar from "../components/dashboard/AdminSidebar.jsx";
 import Navbar from "../components/dashboard/Navbar.jsx";
-import { Outlet } from "react-router-dom";
+import { Outlet} from "react-router-dom";
 
 const AdminDashboard = () => {
-  const { user } = useAuth();
+  const { user} = useAuth();
 
   return (
     <div className="flex">
@@ -14,7 +14,6 @@ const AdminDashboard = () => {
         <Outlet />
       </div>
     </div>
-  );
-};
+  );};
 
 export default AdminDashboard;

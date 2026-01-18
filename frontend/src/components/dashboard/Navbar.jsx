@@ -1,9 +1,9 @@
 // Navbar.jsx
-import { useAuth } from "../../context/authContext";
-import { FaSignOutAlt } from "react-icons/fa";
+import { useAuth} from "../../context/authContext";
+import { FaSignOutAlt} from "react-icons/fa";
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, logout} = useAuth();
 
   return (
     <div>
@@ -30,7 +30,6 @@ const Navbar = () => {
       </div>
     </nav>
     </div>
-  );
-};
+  );};
 
 export default Navbar;

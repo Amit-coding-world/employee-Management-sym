@@ -1,5 +1,5 @@
 
-const SummaryCard = ({ icon, text, number, color }) => {
+const SummaryCard = ({ icon, text, number, color}) => {
   return (
     <div className='rounded flex bg-white'>
       <div className={`text-3xl flex justify-center items-center ${color} text-white px-4`}>
@@ -10,7 +10,6 @@ const SummaryCard = ({ icon, text, number, color }) => {
         <p className='text-xl font-bold'>{number}</p>
       </div>
     </div>
-  )
-}
+  )}
 
 export default SummaryCard

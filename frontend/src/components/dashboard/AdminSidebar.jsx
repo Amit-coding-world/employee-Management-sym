@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink} from "react-router-dom";
 import {
   FaBuilding,
   FaCalendarAlt,
@@ -6,13 +6,12 @@ import {
   FaTachometerAlt,
   FaUsers,
   FaCogs,
-  FaSignOutAlt,
-} from "react-icons/fa";
-import { AiOutlineFileText } from "react-icons/ai";
-import { useAuth } from "../../context/authContext";
+  FaSignOutAlt,} from "react-icons/fa";
+import { AiOutlineFileText} from "react-icons/ai";
+import { useAuth} from "../../context/authContext";
 
 const AdminSideBar = () => {
-  const { user, logout } = useAuth();
+  const { user, logout} = useAuth();
 
   return (
     <div className="bg-gray-900 text-white h-screen  fixed left-0 top-0 bottom-0 w-20 md:w-64 flex flex-col justify-between">
@@ -30,9 +29,8 @@ const AdminSideBar = () => {
           <NavLink
             to="/admin-dashboard"
             end
-            className={({ isActive }) =>
-              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-            }
+            className={({ isActive}) =>
+              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`}
           >
             <FaTachometerAlt />
             <span className="hidden md:inline">Dashboard</span>
@@ -40,9 +38,8 @@ const AdminSideBar = () => {
 
           <NavLink
             to="/admin-dashboard/employees"
-            className={({ isActive }) =>
-              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-            }
+            className={({ isActive}) =>
+              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`}
           >
             <FaUsers />
             <span className="hidden md:inline">Employee</span>
@@ -50,9 +47,8 @@ const AdminSideBar = () => {
 
           <NavLink
             to="/admin-dashboard/departments"
-            className={({ isActive }) =>
-              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-            }
+            className={({ isActive}) =>
+              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`}
           >
             <FaBuilding />
             <span className="hidden md:inline">Department</span>
@@ -60,9 +56,8 @@ const AdminSideBar = () => {
 
           <NavLink
             to="/admin-dashboard/leaves"
-            className={({ isActive }) =>
-              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-            }
+            className={({ isActive}) =>
+              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`}
           >
             <FaCalendarAlt />
             <span className="hidden md:inline">Leave</span>
@@ -70,9 +65,8 @@ const AdminSideBar = () => {
 
           <NavLink
             to="/admin-dashboard/salary/add"
-            className={({ isActive }) =>
-              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-            }
+            className={({ isActive}) =>
+              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`}
           >
             <FaMoneyBillWave />
             <span className="hidden md:inline">Salary</span>
@@ -80,9 +74,8 @@ const AdminSideBar = () => {
 
           <NavLink
             to="/admin-dashboard/attendance"
-            className={({ isActive }) =>
-              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-            }
+            className={({ isActive}) =>
+              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`}
           >
             <FaCalendarAlt />
             <span className="hidden md:inline">Attendance</span>
@@ -90,9 +83,8 @@ const AdminSideBar = () => {
 
           <NavLink
             to="/admin-dashboard/attendance-report"
-            className={({ isActive }) =>
-              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-            }
+            className={({ isActive}) =>
+              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`}
           >
             <AiOutlineFileText />
             <span className="hidden md:inline">Attendance Report</span>
@@ -100,9 +92,8 @@ const AdminSideBar = () => {
 
           <NavLink
             to="/admin-dashboard/setting"
-            className={({ isActive }) =>
-              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-            }
+            className={({ isActive}) =>
+              `${isActive ? "bg-teal-500" : ""} flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`}
           >
             <FaCogs />
             <span className="hidden md:inline">Settings</span>
@@ -122,7 +113,6 @@ const AdminSideBar = () => {
         <span className="hidden md:inline ml-2">Logout</span>
       </div>
     </div>
-  );
-};
+  );};
 
 export default AdminSideBar;
