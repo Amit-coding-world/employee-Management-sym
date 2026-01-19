@@ -1,6 +1,7 @@
-import api from '../utils/api.js';
+import axios from "axios";
 import {useState} from "react";
 import {useNavigate, useLocation, Link} from 'react-router-dom';
+
 
 const ResetPassword = () => {
     const location = useLocation();
@@ -27,7 +28,7 @@ const ResetPassword = () => {
             return setError("Passwords do not match");
         }
         try {
-            const response = await api.post(`/auth/reset-password`, {
+            const response = await axios.post(`https://employee-management-system-sbvn.onrender.com/api/auth/reset-password`, {
                 email: formData.email,
                 otp: formData.otp,
                 newPassword: formData.newPassword

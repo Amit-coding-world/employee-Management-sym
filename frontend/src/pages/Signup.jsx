@@ -1,4 +1,5 @@
-import api from '../utils/api.js';
+
+import axios from "axios";
 import {useState} from "react";
 import {useNavigate, Link} from 'react-router-dom';
 
@@ -24,7 +25,7 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await api.post(`/auth/signup`, formData);
+            const response = await axios.post(`https://employee-management-system-sbvn.onrender.com/api/auth/signup`, formData);
             if (response.data.success) {
                 navigate('/login');
             }

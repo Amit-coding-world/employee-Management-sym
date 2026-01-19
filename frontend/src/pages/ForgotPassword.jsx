@@ -1,6 +1,7 @@
-import api from '../utils/api.js';
+
 import {useState} from "react";
 import {useNavigate, Link} from 'react-router-dom';
+import axios from "axios";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
@@ -13,7 +14,7 @@ const ForgotPassword = () => {
         setError(null);
         setMessage(null);
         try {
-            const response = await api.post(`/auth/forgot-password`, {email});
+            const response = await axios.post(`https://employee-management-system-sbvn.onrender.com/api/auth/forgot-password`, {email});
             if (response.data.success) {
                 let displayMessage = response.data.message;
                 // Show OTP in development mode
