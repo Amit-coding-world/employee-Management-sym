@@ -1,21 +1,32 @@
-import User from "./models/User.js";
-import bcrypt from "bcrypt";
 import connectToDatabase from "./db/db.js";
 
-const userRegister=async()=>{
-    connectToDatabase();
-    try {
-        const hashedPassword = await bcrypt.hash("admin", 10);
-        const newUser=new User({
-            name: "admin",
-            email:"admin@gmail.com",
-            password:hashedPassword,
-            role:"admin"
-        })
-        await newUser.save();
-    } catch (error) {
-        console.log("User registration error:", error);
-    }
-}
+const checkDatabase = async () => {
+    try { // Connect to database
+        await connectToDatabase();
+        console.log("🔗 Connected to database successfully!");
 
-userRegister();
+        console.log("\n" + "=".repeat(60));
+        console.log("📝 EMPLOYEE MANAGEMENT SYSTEM - SETUP INSTRUCTIONS");
+        console.log("=".repeat(60));
+        console.log("\n✨ Database is ready!");
+        console.log("\n📌 To create an admin account:");
+        console.log("   1. Go to the Signup page in your application");
+        console.log("   2. Fill in your details:");
+        console.log("      - Name");
+        console.log("      - Email");
+        console.log("      - Password");
+        console.log("      - Company Name");
+        console.log("      - Company Description (optional)");
+        console.log("   3. Click 'Sign Up'");
+        console.log("\n🎉 Your admin account will be created automatically!");
+        console.log("🏢 Each signup creates a new company with an admin user.");
+        console.log("\n" + "=".repeat(60) + "\n");
+
+        process.exit(0);
+    } catch (error) {
+        console.error("❌ Database connection error:", error.message);
+        process.exit(1);
+    }
+};
+
+checkDatabase();
