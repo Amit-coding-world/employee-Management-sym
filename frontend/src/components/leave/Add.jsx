@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {useAuth} from "../../context/authContext";
-import axios from "axios";
+import api from "../../utils/api";
 import {useNavigate} from "react-router-dom";
 
 const Add = () => {
@@ -23,13 +23,7 @@ const Add = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post(`https://employee-management-system-sbvn.onrender.com/api/leave/add`, leave, {
-                headers: {
-                    Authorization: `Bearer ${
-                        localStorage.getItem("token")
-                    }`
-                }
-            });
+            const response = await api.post(`/leave/add`, leave);
             if (response.data.success) {
                 navigate(`/employee-dashboard/leaves/${
                     user._id

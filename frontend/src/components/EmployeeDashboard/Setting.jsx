@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from '../../utils/api';
 import {useState} from "react";
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../../context/authContext.jsx';
@@ -25,16 +25,10 @@ const Setting = () => {
         }
 
         try {
-            const response = await axios.put(`https://employee-management-system-sbvn.onrender.com/api/setting/change-password`, {
+            const response = await api.put(`/setting/change-password`, {
                 userId: setting.userId,
                 oldPassword: setting.oldPassword,
                 newPassword: setting.newPassword
-            }, {
-                headers: {
-                    Authorization: `Bearer ${
-                        localStorage.getItem("token")
-                    }`
-                }
             });
 
             if (response.data.success) {

@@ -1,8 +1,9 @@
 import {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
 import api, {BASE_URL} from "../../utils/api";
-import {columns, EmployeeButtons} from "../../utils/EmployeeHelper";
+import {columns, ManagerButtons} from "../../utils/ManagerHelper";
 import DataTable from "react-data-table-component";
+import Loading from "../Loading";
 
 const List = () => {
     const [managers, setManagers] = useState([]);
@@ -34,7 +35,7 @@ const List = () => {
                                     emp ?. userId ?. name || "Manager"
                                 }/>
                         ),
-                        action: <EmployeeButtons _id={
+                        action: <ManagerButtons _id={
                             emp._id
                         }/>
                     }));
@@ -68,7 +69,7 @@ const List = () => {
             <div className="flex justify-between items-center mb-4">
                 <input type="text" placeholder="Search By Manager Name" className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
                     onChange={handleFilter}/>
-                <Link to="/admin-dashboard/add-employee" className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors shadow-md">
+                <Link to="/admin-dashboard/add-manager" className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors shadow-md">
                     Add New Manager
                 </Link>
             </div>

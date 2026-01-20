@@ -1,7 +1,6 @@
-
 import {useState} from "react";
 import {useNavigate, Link} from 'react-router-dom';
-import axios from "axios";
+import api from "../utils/api";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
@@ -14,7 +13,7 @@ const ForgotPassword = () => {
         setError(null);
         setMessage(null);
         try {
-            const response = await axios.post(`https://employee-management-system-sbvn.onrender.com/api/auth/forgot-password`, {email});
+            const response = await api.post(`/auth/forgot-password`, {email});
             if (response.data.success) {
                 let displayMessage = response.data.message;
                 // Show OTP in development mode
@@ -39,39 +38,43 @@ const ForgotPassword = () => {
         }
     };
 
-    return (<div className="flex flex-col items-center h-screen justify-center bg-gradient-to-b from-teal-600 from-50% to-gray-100 to-50% space-y-6">
-        <h2 className="font-sevillana text-2xl md:text-3xl lg:text-4xl text-white drop-shadow-lg tracking-wide">
-            Employee Management System
-        </h2>
+    return (
+        <div className="flex flex-col items-center h-screen justify-center bg-gradient-to-b from-teal-600 from-50% to-gray-100 to-50% space-y-6">
+            <h2 className="font-sevillana text-2xl md:text-3xl lg:text-4xl text-white drop-shadow-lg tracking-wide">
+                Employee Management System
+            </h2>
 
-        <div className="border shadow p-6 w-80 bg-white">
-            <h2 className="text-2xl font-bold mb-4">Forgot Password</h2>
-            {
-            error && <p className="text-red-500 mb-4"> {error}</p>
-        }
-            {
-            message && <p className="text-green-500 mb-4"> {message}</p>
-        }
-            <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label className="block text-gray-700">Email:</label>
-                    <input type="email" placeholder="Enter Email" required className="w-full px-3 py-2 border"
-                        onChange={
-                            (e) => setEmail(e.target.value)
-                        }/>
-                </div>
-                <div className="mb-4">
-                    <button type="submit" className="w-full bg-teal-600 text-white py-2 hover:bg-teal-700 ">
-                        Send OTP
-                    </button>
-                </div>
-                <p className="text-center">
-                    Back to
-                    <Link to="/login" className="text-teal-600">Login</Link>
-                </p>
-            </form>
+            <div className="border shadow p-6 w-80 bg-white">
+                <h2 className="text-2xl font-bold mb-4">Forgot Password</h2>
+                {
+                error && <p className="text-red-500 mb-4">
+                    {error}</p>
+            }
+                {
+                message && <p className="text-green-500 mb-4">
+                    {message}</p>
+            }
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Email:</label>
+                        <input type="email" placeholder="Enter Email" required className="w-full px-3 py-2 border"
+                            onChange={
+                                (e) => setEmail(e.target.value)
+                            }/>
+                    </div>
+                    <div className="mb-4">
+                        <button type="submit" className="w-full bg-teal-600 text-white py-2 hover:bg-teal-700 ">
+                            Send OTP
+                        </button>
+                    </div>
+                    <p className="text-center">
+                        Back to
+                        <Link to="/login" className="text-teal-600">Login</Link>
+                    </p>
+                </form>
+            </div>
         </div>
-    </div>);
+    );
 };
 
 export default ForgotPassword;

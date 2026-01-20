@@ -43,13 +43,7 @@ const EditDepartment = () => {
         e.preventDefault();
         setSubmitting(true);
         try {
-            const response = await axios.put(`${"https://employee-management-system-sbvn.onrender.com"}/api/department/${id}`, department, {
-                headers: {
-                    Authorization: `Bearer ${
-                        localStorage.getItem("token")
-                    }`
-                }
-            });
+            const response = await api.put(`/department/${id}`, department);
             if (response.data.success) {
                 navigate("/admin-dashboard/departments");
             }
@@ -64,8 +58,7 @@ const EditDepartment = () => {
     };
 
     if (depLoading) {
-        return <div className="text-center mt-10 text-gray-600">
-            Loading ...</div>;
+        return <Loading/>;
     }
 
     return (

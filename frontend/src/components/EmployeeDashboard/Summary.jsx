@@ -1,7 +1,7 @@
 import {FaUser, FaCheckCircle, FaTimesCircle, FaHourglassHalf} from "react-icons/fa";
 import {useAuth} from "../../context/authContext";
 import {useEffect, useState} from "react";
-import axios from "axios";
+import api from "../../utils/api";
 
 const Summary = () => {
     const {user} = useAuth();
@@ -10,13 +10,7 @@ const Summary = () => {
     useEffect(() => {
         const fetchAttendance = async () => {
             try {
-                const response = await axios.get("https://employee-management-system-sbvn.onrender.com/api/attendance/user-status", {
-                    headers: {
-                        Authorization: `Bearer ${
-                            localStorage.getItem("token")
-                        }`
-                    }
-                });
+                const response = await api.get("/attendance/user-status");
                 if (response.data.success) {
                     setAttendance(response.data.attendance);
                 }

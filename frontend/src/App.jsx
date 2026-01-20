@@ -27,6 +27,9 @@ import Attendance from "./components/attendance/Attendance.jsx";
 import AttendanceReport from "./components/attendance/AttendanceReport.jsx";
 import EmpAttendance from "./components/EmployeeDashboard/Attendance.jsx";
 import ManagerList from "./components/manager/List.jsx";
+import AddManager from "./components/manager/Add.jsx";
+import EditManager from "./components/manager/Edit.jsx";
+import ViewManager from "./components/manager/View.jsx";
 
 
 function App() {
@@ -67,6 +70,12 @@ requiredRole={
                         element={<List/>}></Route>
                     <Route path="/admin-dashboard/managers"
                         element={<ManagerList/>}></Route>
+                    <Route path="/admin-dashboard/add-manager"
+                        element={<AddManager/>}></Route>
+                    <Route path="/admin-dashboard/managers/:id"
+                        element={<ViewManager/>}></Route>
+                    <Route path="/admin-dashboard/managers/edit/:id"
+                        element={<EditManager/>}></Route>
 
                     <Route path="/admin-dashboard/add-employee"
                         element={<Add/>}></Route>
