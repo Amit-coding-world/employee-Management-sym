@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 
@@ -19,13 +19,7 @@ const AddDepartment = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await axios.post(`https://employee-management-system-sbvn.onrender.com/api/department/add`, department, {
-                headers: {
-                    Authorization: `Bearer ${
-                        localStorage.getItem("token")
-                    }`
-                }
-            });
+            const response = await api.post(`/department/add`, department);
             if (response.data.success) {
                 navigate("/admin-dashboard/departments");
             }

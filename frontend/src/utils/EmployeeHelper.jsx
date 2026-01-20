@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "./api";
 import {useNavigate} from "react-router-dom";
 
 export const columns = [
@@ -40,13 +40,7 @@ export const columns = [
 export const fetchDepartments = async () => {
     let departments;
     try {
-        const response = await axios.get(`https://employee-management-system-sbvn.onrender.com/api/department`, {
-            headers: {
-                Authorization: `Bearer ${
-                    localStorage.getItem("token")
-                }`
-            }
-        });
+        const response = await api.get('/department');
         if (response.data.success) {
             departments = response.data.departments;
         }
@@ -62,13 +56,7 @@ export const fetchDepartments = async () => {
 export const getEmployees = async (id) => {
     let employees;
     try {
-        const response = await axios.get(` ${"https://employee-management-system-sbvn.onrender.com"}/api/employee/department/${id}`, {
-            headers: {
-                Authorization: ` Bearer ${
-                    localStorage.getItem("token")
-                }`
-            }
-        });
+        const response = await api.get(`/employee/department/${id}`);
         if (response.data.success) {
             employees = response.data.employees;
         }
@@ -83,33 +71,30 @@ export const getEmployees = async (id) => {
 
 export const EmployeeButtons = ({_id}) => {
     const navigate = useNavigate();
-    return (
-        <div className="flex space-x-3">
-            <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                onClick={
-                    () => navigate(`/admin-dashboard/employees/${_id}`)
-            }>
-                View
-            </button>
-            <button className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
-                onClick={
-                    () => navigate(`/admin-dashboard/employees/edit/${_id}`)
-            }>
-                Edit
-            </button>
-            <button className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition"
-                onClick={
-                    () => navigate(`/admin-dashboard/employees/salary/${_id}`)
-            }>
-                Salary
-            </button>
-            <button className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
-                onClick={
-                    () => navigate(`/admin-dashboard/employees/leaves/${_id}`)
-            }>
-                Leave
-            </button>
-        </div>
-
-    );
+    return (<div className="flex space-x-3">
+        <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            onClick={
+                () => navigate(`/admin-dashboard/employees/${_id}`)
+        }>
+            View
+        </button>
+        <button className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
+            onClick={
+                () => navigate(`/admin-dashboard/employees/edit/${_id}`)
+        }>
+            Edit
+        </button>
+        <button className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition"
+            onClick={
+                () => navigate(`/admin-dashboard/employees/salary/${_id}`)
+        }>
+            Salary
+        </button>
+        <button className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
+            onClick={
+                () => navigate(`/admin-dashboard/employees/leaves/${_id}`)
+        }>
+            Leave
+        </button>
+    </div>);
 };

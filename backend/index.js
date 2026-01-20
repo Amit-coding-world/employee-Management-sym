@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import {fileURLToPath} from 'url';
 
 import connectToDatabase from './db/db.js';
 import authRouter from './routes/auth.js';
@@ -26,7 +26,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ✅ CORS (use CLIENT_URL from .env)
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(cors({
+    origin: [
+        "http://localhost:5173", process.env.CLIENT_URL
+    ],
+    credentials: true
+}));
 app.use(express.json());
 
 // ✅ Serve uploaded files
@@ -44,13 +49,13 @@ app.use('/api/attendance', attendanceRouter);
 
 // ✅ Serve React frontend build in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/dist')));
-  app.get(/.*/, (_, res) => {
-    res.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'));
-  });
+    app.use(express.static(path.join(__dirname, '../frontend/dist')));
+    app.get(/.*/, (_, res) => {
+        res.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'));
+    });
 }
 
 // ✅ Start server
 app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
+    console.log(`Server running on ${PORT}`);
 });

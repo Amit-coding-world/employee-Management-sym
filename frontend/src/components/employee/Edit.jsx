@@ -1,7 +1,9 @@
 import {useEffect, useState} from "react";
 import {fetchDepartments} from "../../utils/EmployeeHelper";
-import axios from "axios";
+import api, {BASE_URL} from "../../utils/api";
 import {useNavigate, useParams} from "react-router-dom";
+
+import Loading from "../Loading";
 
 const Edit = () => {
     const [employee, setEmployee] = useState({
@@ -28,13 +30,7 @@ const Edit = () => {
     useEffect(() => {
         const fetchEmployee = async () => {
             try {
-                const response = await axios.get(`https://employee-management-system-sbvn.onrender.com/api/employee/${id}`, {
-                    headers: {
-                        Authorization: ` Bearer ${
-                            localStorage.getItem("token")
-                        }`
-                    }
-                });
+                const response = await api.get(`/employee/${id}`);
                 if (response.data.success) {
                     const emp = response.data.employee;
                     setEmployee({
@@ -79,7 +75,7 @@ const Edit = () => {
             return URL.createObjectURL(employee.image);
         }
         if (employee.profileImage) {
-            return employee.profileImage.startsWith("http") ? employee.profileImage : `https://employee-management-system-sbvn.onrender.com/${
+            return employee.profileImage.startsWith("http") ? employee.profileImage : `${BASE_URL}/${
                 employee.profileImage
             }`;
         }
@@ -94,13 +90,7 @@ const Edit = () => {
         });
 
         try {
-            const response = await axios.put(`https://employee-management-system-sbvn.onrender.com/api/employee/${id}`, formDataObj, {
-                headers: {
-                    Authorization: `Bearer ${
-                        localStorage.getItem("token")
-                    }`
-                }
-            });
+            const response = await api.put(`/employee/${id}`, formDataObj);
             if (response.data.success) {
                 navigate("/admin-dashboard/employees");
             }
@@ -113,133 +103,139 @@ const Edit = () => {
     };
 
     if (loading) {
-        return <div className="text-center mt-10">
-        Loading ...</div>;
+        return <Loading/>;
     }
 
-    return (<div className="max-w-4xl mx-auto mt-10 bg-white p-8 rounded-md shadow-md"> {/* Back Button */}
-        <button onClick={
-                () => navigate(-1)
-            }
-            className="mb-6 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md">
-            ← Back
-        </button>
-
-        {/* Title */}
-        <h2 className="text-2xl font-bold mb-6 text-center">Edit Employee</h2>
-
-        <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> {/* Name */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Name</label>
-                    <input type="text" name="name"
-                        value={
-                            employee.name
-                        }
-                        onChange={handleChange}
-                        required
-                        className="mt-1 p-2 block w-full border border-gray-300 rounded-md"/>
-                </div>
-
-                {/* Employee ID (Read-only) */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Employee ID</label>
-                    <input type="text" name="employeeId"
-                        value={
-                            employee.employeeId
-                        }
-                        readOnly
-                        className="mt-1 p-2 block w-full border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"/>
-                </div>
-
-                {/* Marital Status */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Marital Status</label>
-                    <select name="maritalStatus"
-                        value={
-                            employee.maritalStatus
-                        }
-                        onChange={handleChange}
-                        required
-                        className="mt-1 p-2 block w-full border border-gray-300 rounded-md">
-                        <option value="">Select Status</option>
-                        <option value="single">Single</option>
-                        <option value="married">Married</option>
-                    </select>
-                </div>
-
-                {/* Designation */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Designation</label>
-                    <input type="text" name="designation"
-                        value={
-                            employee.designation
-                        }
-                        onChange={handleChange}
-                        required
-                        className="mt-1 p-2 block w-full border border-gray-300 rounded-md"/>
-                </div>
-
-                {/* Salary */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Salary</label>
-                    <input type="number" name="salary"
-                        value={
-                            employee.salary
-                        }
-                        onChange={handleChange}
-                        required
-                        className="mt-1 p-2 block w-full border border-gray-300 rounded-md"/>
-                </div>
-
-                {/* Department */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Department</label>
-                    <select name="department"
-                        value={
-                            employee.department
-                        }
-                        onChange={handleChange}
-                        required
-                        className="mt-1 p-2 block w-full border border-gray-300 rounded-md">
-                        <option value="">Select Department</option>
-                        {
-                        departments.map((dep) => (<option key={
-                                dep._id
-                            }
-                            value={
-                                dep._id
-                        }> {
-                            dep.dep_name
-                        } </option>))
-                    } </select>
-                </div>
-                {/* Current/New Image Preview */}
-                <div className="flex flex-col items-center justify-center p-4 border rounded-md bg-gray-50">
-                    <img src={
-                            getImageSource()
-                        }
-                        alt="Profile"
-                        className="w-32 h-32 rounded-full object-cover border-2 border-blue-500 mb-2"/>
-                    <p className="text-xs text-gray-500">Image Preview</p>
-                </div>
-
-                {/* Image Upload */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Upload New Image</label>
-                    <input type="file" name="image"
-                        onChange={handleChange}
-                        accept="image/*"
-                        className="mt-1 p-2 block w-full border border-gray-300 rounded-md"/>
-                </div>
-            </div>
-
-            {/* Submit */}
-            <button type="submit" className="w-full mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
-                Update Employee
+    return (
+        <div className="max-w-4xl mx-auto mt-10 bg-white p-8 rounded-md shadow-md">
+            {/* Back Button */}
+            <button onClick={
+                    () => navigate(-1)
+                }
+                className="mb-6 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md">
+                ← Back
             </button>
-        </form>
-    </div>);
+
+            {/* Title */}
+            <h2 className="text-2xl font-bold mb-6 text-center">Edit Employee</h2>
+
+            <form onSubmit={handleSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Name */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Name</label>
+                        <input type="text" name="name"
+                            value={
+                                employee.name
+                            }
+                            onChange={handleChange}
+                            required
+                            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"/>
+                    </div>
+
+                    {/* Employee ID (Read-only) */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Employee ID</label>
+                        <input type="text" name="employeeId"
+                            value={
+                                employee.employeeId
+                            }
+                            readOnly
+                            className="mt-1 p-2 block w-full border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"/>
+                    </div>
+
+                    {/* Marital Status */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Marital Status</label>
+                        <select name="maritalStatus"
+                            value={
+                                employee.maritalStatus
+                            }
+                            onChange={handleChange}
+                            required
+                            className="mt-1 p-2 block w-full border border-gray-300 rounded-md">
+                            <option value="">Select Status</option>
+                            <option value="single">Single</option>
+                            <option value="married">Married</option>
+                        </select>
+                    </div>
+
+                    {/* Designation */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Designation</label>
+                        <input type="text" name="designation"
+                            value={
+                                employee.designation
+                            }
+                            onChange={handleChange}
+                            required
+                            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"/>
+                    </div>
+
+                    {/* Salary */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Salary</label>
+                        <input type="number" name="salary"
+                            value={
+                                employee.salary
+                            }
+                            onChange={handleChange}
+                            required
+                            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"/>
+                    </div>
+
+                    {/* Department */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Department</label>
+                        <select name="department"
+                            value={
+                                employee.department
+                            }
+                            onChange={handleChange}
+                            required
+                            className="mt-1 p-2 block w-full border border-gray-300 rounded-md">
+                            <option value="">Select Department</option>
+                            {
+                            departments.map((dep) => (
+                                <option key={
+                                        dep._id
+                                    }
+                                    value={
+                                        dep._id
+                                }>
+                                    {
+                                    dep.dep_name
+                                } </option>
+                            ))
+                        } </select>
+                    </div>
+                    {/* Current/New Image Preview */}
+                    <div className="flex flex-col items-center justify-center p-4 border rounded-md bg-gray-50">
+                        <img src={
+                                getImageSource()
+                            }
+                            alt="Profile"
+                            className="w-32 h-32 rounded-full object-cover border-2 border-blue-500 mb-2"/>
+                        <p className="text-xs text-gray-500">Image Preview</p>
+                    </div>
+
+                    {/* Image Upload */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Upload New Image</label>
+                        <input type="file" name="image"
+                            onChange={handleChange}
+                            accept="image/*"
+                            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"/>
+                    </div>
+                </div>
+
+                {/* Submit */}
+                <button type="submit" className="w-full mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
+                    Update Employee
+                </button>
+            </form>
+        </div>
+    );
 };
 
 export default Edit;

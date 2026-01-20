@@ -1,13 +1,15 @@
 import {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 import {columns, AttendanceHelper} from "../../utils/AttendanceHelper";
 import DataTable from "react-data-table-component";
+import Loading from "../Loading";
 
 const Attendance = () => {
     const [attendance, setAttendance] = useState([]);
     const [loading, setLoading] = useState(false);
     const [filteredAttendance, setFilteredAttendance] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
 
     const statusChange = () => {
         fetchAttendance(false);
@@ -20,13 +22,7 @@ const Attendance = () => {
 
 
         try {
-            const response = await axios.get(`https://employee-management-system-sbvn.onrender.com/api/attendance`, {
-                headers: {
-                    Authorization: `Bearer ${
-                        localStorage.getItem("token")
-                    }`
-                }
-            });
+            const response = await api.get(`/attendance?date=${selectedDate}`);
 
             if (response.data.success) {
                 let sno = 1;
@@ -42,7 +38,8 @@ const Attendance = () => {
                             employeeId={
                                 att.employeeId.employeeId
                             }
-                            statusChange={statusChange}/>
+                            statusChange={statusChange}
+                            date={selectedDate}/>
                     )
                 }));
                 setAttendance(data);
@@ -58,7 +55,7 @@ const Attendance = () => {
 
     useEffect(() => {
         fetchAttendance();
-    }, []);
+    }, [selectedDate]);
 
     const handleFilter = (e) => {
         const records = attendance.filter((emp) => emp.employeeId.toLowerCase().includes(e.target.value.toLowerCase()));
@@ -66,36 +63,46 @@ const Attendance = () => {
     };
 
     if (loading) {
-        return (
-            <div className="flex justify-center items-center h-64">
-                <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-        );
+        return <Loading />;
     }
 
     return (
         <div className="p-6">
             <div className="text-center p-6">
-                <h3 className="text-2xl font-bold">Manage Attendance</h3>
+                <h3 className="text-2xl font-bold font-pacific text-teal-700">Manage Attendance</h3>
             </div>
-            <div className="flex justify-between items-center mt-4">
-                <input type="text" placeholder="Search By Emp ID" className="px-4 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-4 bg-white p-4 rounded-lg shadow-sm">
+                <input type="text" placeholder="Search By Emp ID" className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400 w-full md:w-auto"
                     onChange={handleFilter}/>
-                <p className="text-2xl">
-                    Mark Employees for{" "}
-                    <span className="font-bold underline">
-                        {
-                        new Date().toISOString().split("T")[0]
-                    } </span>
-                </p>
-                <Link to="/admin-dashboard/attendance-report" className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-500 transition">
+                
+                <div className="flex items-center space-x-3 bg-teal-50 px-4 py-2 rounded-full border border-teal-100">
+                    <span className="text-teal-800 font-medium">Mark Attendance for: </span>
+                    <input 
+                        type="date" 
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="bg-transparent border-none outline-none text-teal-900 font-bold cursor-pointer"
+                    />
+                </div>
+
+                <Link to="/admin-dashboard/attendance-report" className="bg-teal-600 text-white px-6 py-2 rounded-full hover:bg-teal-700 transition shadow-md hover:shadow-lg">
                     Attendance Report
                 </Link>
             </div>
-            <div className="mt-6">
+            <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
                 <DataTable columns={columns}
                     data={filteredAttendance}
-                    pagination/>
+                    pagination
+                    customStyles={{
+                        headRow: {
+                            style: {
+                                backgroundColor: '#f0fdfa',
+                                color: '#0f766e',
+                                fontWeight: 'bold'
+                            }
+                        }
+                    }}
+                    />
             </div>
         </div>
     );

@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import {useParams} from "react-router-dom";
+import Loading from "../Loading";
 
 const Attendance = () => {
     const [attendance, setAttendance] = useState([]);
@@ -11,25 +12,13 @@ const Attendance = () => {
         const fetchAttendance = async () => {
             setLoading(true);
             try { // First get the employee record to get the employee document _id
-                const empResponse = await axios.get(`https://employee-management-system-sbvn.onrender.com/api/employee/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${
-                            localStorage.getItem("token")
-                        }`
-                    }
-                });
+                const empResponse = await api.get(`/employee/${id}`);
 
                 if (empResponse.data.success) {
                     const employeeId = empResponse.data.employee._id;
 
                     // Now fetch attendance report filtered by this employeeId
-                    const response = await axios.get(`https://employee-management-system-sbvn.onrender.com/api/attendance/report?employeeId=${employeeId}&limit=100`, {
-                        headers: {
-                            Authorization: `Bearer ${
-                                localStorage.getItem("token")
-                            }`
-                        }
-                    });
+                    const response = await api.get(`/attendance/report?employeeId=${employeeId}&limit=100`);
 
                     if (response.data.success) {
                         setAttendance(response.data.groupData);
@@ -52,8 +41,7 @@ const Attendance = () => {
 
             {
             loading ? (
-                <p className="text-center">Loading...</p>
-            ) : Object.keys(attendance).length === 0 ? (
+                <Loading/>) : Object.keys(attendance).length === 0 ? (
                 <p className="text-center">No attendance records found.</p>
             ) : (
                 <div className="mt-6 overflow-x-auto">

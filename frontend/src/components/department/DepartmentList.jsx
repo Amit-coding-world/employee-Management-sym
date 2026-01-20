@@ -1,8 +1,9 @@
 import {Link} from "react-router-dom";
 import DataTable from "react-data-table-component";
 import {columns, DepartmentButtons} from "../../utils/DepartmentHelper";
-import axios from "axios";
+import api from "../../utils/api";
 import {useState, useEffect} from "react";
+import Loading from "../Loading";
 
 const DepartmentList = () => {
     const [departments, setDepartments] = useState([]);
@@ -16,13 +17,7 @@ const DepartmentList = () => {
     const fetchDepartments = async () => {
         setDepLoading(true);
         try {
-            const response = await axios.get(`https://employee-management-system-sbvn.onrender.com/api/department`, {
-                headers: {
-                    Authorization: `Bearer ${
-                        localStorage.getItem("token")
-                    }`
-                }
-            });
+            const response = await api.get(`/department`);
             if (response.data.success) {
                 let sno = 1;
                 const data = response.data.departments.map((dep) => ({
@@ -76,8 +71,7 @@ const DepartmentList = () => {
             <div className="mt-5">
                 {
                 depLoading ? (
-                    <div className="text-center text-gray-500">Loading departments...</div>
-                ) : filteredDepartments.length > 0 ? (
+                    <Loading/>) : filteredDepartments.length > 0 ? (
                     <DataTable columns={columns}
                         data={filteredDepartments}
                         pagination/>

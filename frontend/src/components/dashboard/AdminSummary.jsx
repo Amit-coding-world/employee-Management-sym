@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
 import SummaryCard from "./SummaryCard.jsx";
-import axios from "axios";
+import api from "../../utils/api";
+import Loading from "../Loading";
+
 import {
     FaBuilding,
     FaCheckCircle,
@@ -17,13 +19,7 @@ const AdminSummary = () => {
     useEffect(() => {
         const fetchSummary = async () => {
             try {
-                const res = await axios.get(`https://employee-management-system-sbvn.onrender.com/api/dashboard/summary`, {
-                    headers: {
-                        Authorization: `Bearer ${
-                            localStorage.getItem("token")
-                        }`
-                    }
-                });
+                const res = await api.get(`/dashboard/summary`);
                 setSummary(res.data);
             } catch (error) {
                 if (error.response) {
@@ -36,8 +32,7 @@ const AdminSummary = () => {
     }, []);
 
     if (!summary) {
-        return <div className="p-6 text-center text-gray-600">
-            Loading ...</div>;
+        return <Loading/>;
     }
 
     return (

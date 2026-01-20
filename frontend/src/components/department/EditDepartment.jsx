@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
+import Loading from "../Loading";
 
 const EditDepartment = () => {
     const {id} = useParams();
@@ -14,13 +15,7 @@ const EditDepartment = () => {
         const fetchDepartment = async () => {
             setDepLoading(true);
             try {
-                const response = await axios.get(`${"https://employee-management-system-sbvn.onrender.com"}/api/department/${id}`, {
-                    headers: {
-                        Authorization: ` Bearer ${
-                            localStorage.getItem("token")
-                        }`
-                    }
-                });
+                const response = await api.get(`/department/${id}`);
                 if (response.data.success) {
                     setDepartment(response.data.department);
                 }

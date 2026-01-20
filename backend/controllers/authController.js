@@ -7,7 +7,7 @@ import crypto from "crypto";
 const login = async (req, res) => {
     try {
         const {email, password} = req.body;
-        const user = await User.findOne({email});
+        const user = await User.findOne({email}).populate("company");
         if (! user) {
             return res.status(404).json({message: "User not found"});
         }
@@ -47,6 +47,7 @@ const signup = async (req, res) => {
             name,
             email,
             password,
+            role,
             companyName,
             companyDescription
         } = req.body;
@@ -67,17 +68,21 @@ const signup = async (req, res) => {
         });
         await company.save();
 
-        // Create admin user
+        // Create user with specified role
         const user = new User({
             name,
             email,
             password: hashedPassword,
-            role: 'admin',
+            role: role || 'admin',
             company: company._id
         });
         await user.save();
 
-        return res.status(201).json({success: true, message: "Company and admin account created successfully"});
+        return res.status(201).json({
+                success: true, message: `${
+                role || 'Admin'
+            } account created successfully`
+        });
 
     } catch (error) {
         return res.status(500).json({success: false, error: error.message});

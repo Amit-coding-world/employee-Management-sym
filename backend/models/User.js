@@ -20,12 +20,16 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         enum: [
-            "admin", "employee"
+            "admin", "manager", "employee"
         ],
         required: true
     },
     profileImage: {
         type: String, // URL to the profile image
+    },
+    company: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Company"
     },
     resetOtp: {
         type: String, // OTP for password reset

@@ -21,16 +21,26 @@ const addEmployee = async (req, res) => {
             role
         } = req.body;
 
+        const requestingUserRole = req.user.role;
+
+        if (role === 'manager' && requestingUserRole !== 'admin') {
+            return res.status(403).json({success: false, error: "Access Denied: Only Admins can add Managers"});
+        }
+        if (role === 'admin' && requestingUserRole !== 'admin') {
+            return res.status(403).json({success: false, error: "Access Denied: Only Admins can add Admins"});
+        }
+        if (requestingUserRole === 'manager' && role !== 'employee') {
+            return res.status(403).json({success: false, error: "Access Denied: Managers can only add Employees"});
+        }
+
+
         const user = await User.findOne({email});
         if (user) {
-            return res.status(400).json({success: false, error: "user already registered in emp"});
+            return res.status(400).json({success: false, error: "User already registered in Employee"});
         }
 
         const hashPassword = await bcrypt.hash(password, 10);
 
-
-        // Debug log for file upload
-        console.log('Uploaded file:', req.file);
 
         // Ensure Cloudinary URL is present
         let profileImageUrl = '';
@@ -49,11 +59,10 @@ const addEmployee = async (req, res) => {
             email,
             password: hashPassword,
             role,
-            profileImage: profileImageUrl
+            profileImage: profileImageUrl,
+            company: req.user.company._id
         });
 
-        // Debug log for profileImage value
-        console.log('Profile image URL to save:', profileImageUrl);
 
         const savedUser = await newUser.save();
 
@@ -65,18 +74,19 @@ const addEmployee = async (req, res) => {
             maritalStatus,
             designation,
             department,
-            salary
+            salary,
+            company: req.user.company._id
         });
         await newEmployee.save();
-        return res.status(200).json({success: true, message: "employee created"})
+        return res.status(200).json({success: true, message: "Employee Created Successfully"})
     } catch (error) {
-        return res.status(500).json({success: false, error: "server error in adding employee"})
+        return res.status(500).json({success: false, error: "Server error in adding employee"})
     }
 };
 
 const getEmployees = async (req, res) => {
     try {
-        const employees = await Employee.find().populate('userId', {password: 0}).populate("department");
+        const employees = await Employee.find({company: req.user.company._id}).populate('userId', {password: 0}).populate("department");
         return res.status(200).json({success: true, employees});
     } catch (error) {
         return res.status(500).json({
@@ -95,6 +105,10 @@ const getEmployee = async (req, res) => {
             employee = await Employee.findOne({userId: id}).populate('userId', {password: 0}).populate("department");
         }
 
+        if (employee && employee.company && employee.company.toString() !== req.user.company._id.toString()) {
+            return res.status(403).json({success: false, error: "Access Denied: Employee belongs to another company"});
+        }
+
         return res.status(200).json({success: true, employee});
     } catch (error) {
         return res.status(500).json({
@@ -107,9 +121,7 @@ const getEmployee = async (req, res) => {
 const updateEmployee = async (req, res) => {
     try {
         const {id} = req.params;
-        console.log('Update Employee ID:', id);
-        console.log('Update Request Body:', req.body);
-        console.log('Update Request File:', req.file);
+
 
         const {
             name,
@@ -123,6 +135,11 @@ const updateEmployee = async (req, res) => {
         if (! employee) {
             return res.status(404).json({success: false, error: "employee not found"});
         }
+
+        if (employee.company && employee.company.toString() !== req.user.company._id.toString()) {
+            return res.status(403).json({success: false, error: "Access Denied: Employee belongs to another company"});
+        }
+
         const user = await User.findById(employee.userId);
         if (! user) {
             return res.status(404).json({success: false, error: "user not found"});

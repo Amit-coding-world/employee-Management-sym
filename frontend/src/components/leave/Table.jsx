@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {LeaveButtons, columns} from "../../utils/LeaveHelper";
-import axios from "axios";
+import api from "../../utils/api";
 import DataTable from "react-data-table-component";
+import Loading from "../Loading";
+
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -15,13 +17,7 @@ const Table = () => {
     const fetchLeaves = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`https://employee-management-system-sbvn.onrender.com/api/leave`, {
-                headers: {
-                    Authorization: `Bearer ${
-                        localStorage.getItem("token")
-                    }`
-                }
-            });
+            const response = await api.get('/leave');
             if (response.data.success) {
                 let sno = 1;
                 const data = response.data.leaves.map((leave) => {
@@ -104,8 +100,7 @@ const Table = () => {
     };
 
     if (loading) {
-        return <div className="text-center mt-10 text-gray-600">
-            Loading ...</div>;
+        return <Loading/>;
     }
 
     return (

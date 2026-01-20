@@ -1,5 +1,5 @@
 import {useState} from "react";
-import axios from "axios";
+import api from "./api";
 
 export const columns = [
     {
@@ -31,21 +31,13 @@ export const columns = [
     },
 ];
 
-export const AttendanceHelper = ({status, employeeId, statusChange}) => {
+export const AttendanceHelper = ({status, employeeId, statusChange, date}) => {
     const [updating, setUpdating] = useState(false);
 
     const markEmployee = async (status, employeeId) => {
         setUpdating(true);
         try {
-            const response = await axios.put(`https://employee-management-system-sbvn.onrender.com/api/attendance/update/${employeeId}`, {
-                status
-            }, {
-                headers: {
-                    Authorization: `Bearer ${
-                        localStorage.getItem("token")
-                    }`
-                }
-            });
+            const response = await api.put(`/attendance/update/${employeeId}`, {status, date});
             if (response.data.success) {
                 statusChange();
             }

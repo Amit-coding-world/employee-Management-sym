@@ -1,6 +1,7 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import axios from "axios";
+import api, {BASE_URL} from "../../utils/api";
+import Loading from "../Loading";
 
 const Detail = () => {
     const {id} = useParams();
@@ -12,13 +13,7 @@ const Detail = () => {
     useEffect(() => {
         const fetchLeave = async () => {
             try {
-                const response = await axios.get(`https://employee-management-system-sbvn.onrender.com/api/leave/detail/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${
-                            localStorage.getItem("token")
-                        }`
-                    }
-                });
+                const response = await api.get(`/leave/detail/${id}`);
                 if (response.data.success) {
                     setLeave(response.data.leave);
                 }
@@ -37,15 +32,7 @@ const Detail = () => {
     const changeStatus = async (id, status) => {
         setUpdating(true);
         try {
-            const response = await axios.put(`https://employee-management-system-sbvn.onrender.com/api/leave/${id}`, {
-                status
-            }, {
-                headers: {
-                    Authorization: `Bearer ${
-                        localStorage.getItem("token")
-                    }`
-                }
-            });
+            const response = await api.put(`/leave/${id}`, {status});
             if (response.data.success) {
                 navigate("/admin-dashboard/leaves");
             }
@@ -60,8 +47,7 @@ const Detail = () => {
     };
 
     if (loading) {
-        return <div className="text-center mt-10 text-gray-600">
-            Loading ...</div>;
+        return <Loading/>;
     }
 
     if (!leave) {
@@ -88,7 +74,7 @@ const Detail = () => {
             <div className="flex flex-col md:flex-row items-start md:space-x-10 space-y-6 md:space-y-0">
                 <div className="flex-shrink-0 mx-auto md:mx-0">
                     <img src={
-                            leave ?. employeeId ?. userId ?. profileImage ? (leave.employeeId.userId.profileImage.startsWith("http") ? leave.employeeId.userId.profileImage : `https://employee-management-system-sbvn.onrender.com/${
+                            leave ?. employeeId ?. userId ?. profileImage ? (leave.employeeId.userId.profileImage.startsWith("http") ? leave.employeeId.userId.profileImage : `${BASE_URL}/${
                                 leave.employeeId.userId.profileImage
                             }`) : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
                         }

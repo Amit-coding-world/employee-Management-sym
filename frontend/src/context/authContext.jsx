@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../utils/api";
 import {createContext, useState, useContext, useEffect} from "react";
 
 
@@ -13,11 +13,7 @@ const authContext = ({children}) => {
             try {
                 const token = localStorage.getItem("token");
                 if (token) {
-                    const response = await axios.get(`https://employee-management-system-sbvn.onrender.com/api/auth/verify`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
+                    const response = await api.get(`/auth/verify`);
                     if (response.data.success) {
                         setUser(response.data.user);
                     } else {
@@ -45,12 +41,9 @@ const authContext = ({children}) => {
         localStorage.removeItem("token");
     };
 
-    return (
-        <userContext.Provider value={
-            {user, login, logout, loading}
-        }>
-            {children} </userContext.Provider>
-    );
+    return (<userContext.Provider value={
+        {user, login, logout, loading}
+    }> {children} </userContext.Provider>);
 };
 export const useAuth = () => useContext(userContext);
 export default authContext;

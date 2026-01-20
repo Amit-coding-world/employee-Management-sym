@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
+import api from "./api";
 
 export const columns = [
     {
@@ -22,13 +22,7 @@ export const DepartmentButtons = ({_id, onDepartmentDelete}) => {
         const confirm = window.confirm("Do you want to delete?")
         if (confirm) {
             try {
-                const response = await axios.delete(` ${"https://employee-management-system-sbvn.onrender.com"}/api/department/${id}`, {
-                    headers: {
-                        Authorization: ` Bearer ${
-                            localStorage.getItem("token")
-                        }`
-                    }
-                });
+                const response = await api.delete(`/department/${id}`);
                 if (response.data.success) {
                     onDepartmentDelete()
                 }
@@ -39,17 +33,15 @@ export const DepartmentButtons = ({_id, onDepartmentDelete}) => {
             }
         }
     };
-    return (
-        <div className="flex space-x-3">
-            <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                onClick={
-                    () => navigate(`/admin-dashboard/department/${_id}`)
-            }>Edit</button>
-            <button className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition ml-2"
-                onClick={
-                    () => handleDelete(_id)
-            }>Delete</button>
+    return (<div className="flex space-x-3">
+        <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            onClick={
+                () => navigate(`/admin-dashboard/department/${_id}`)
+        }>Edit</button>
+        <button className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition ml-2"
+            onClick={
+                () => handleDelete(_id)
+        }>Delete</button>
 
-        </div>
-    )
+    </div>)
 }

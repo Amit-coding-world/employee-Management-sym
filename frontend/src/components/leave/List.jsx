@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 import {useAuth} from "../../context/authContext";
+import Loading from "../Loading";
 
 const List = () => {
     const [leaves, setLeaves] = useState([]);
@@ -15,15 +16,9 @@ const List = () => {
     const fetchLeaves = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(` ${"https://employee-management-system-sbvn.onrender.com"}/api/leave/${id}/${
+            const response = await api.get(`/leave/${id}/${
                 user.role
-            }`, {
-                headers: {
-                    Authorization: ` Bearer ${
-                        localStorage.getItem("token")
-                    }`
-                }
-            });
+            }`);
             if (response.data.success) {
                 setLeaves(response.data.leaves);
                 setFilteredLeaves(response.data.leaves);
@@ -66,7 +61,7 @@ const List = () => {
     };
 
     if (loading) {
-        return <div className="text-center mt-10 text-gray-600">Loading...</div>;
+        return <Loading/>;
     }
 
     return (

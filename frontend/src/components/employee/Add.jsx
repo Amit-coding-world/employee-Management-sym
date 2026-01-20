@@ -1,12 +1,14 @@
 import {useEffect, useState} from "react";
 import {fetchDepartments} from "../../utils/EmployeeHelper";
-import axios from "axios";
+import api from "../../utils/api";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../../context/authContext.jsx";
 
 const Add = () => {
     const [departments, setDepartments] = useState([]);
     const [formData, setFormData] = useState({});
     const navigate = useNavigate();
+    const {user} = useAuth();
 
     useEffect(() => {
         const getDepartments = async () => {
@@ -40,15 +42,13 @@ const Add = () => {
         });
 
         try {
-            const response = await axios.post(`https://employee-management-system-sbvn.onrender.com/api/employee/add`, formDataObj, {
-                headers: {
-                    Authorization: `Bearer ${
-                        localStorage.getItem("token")
-                    }`
-                }
-            });
+            const response = await api.post('/employee/add', formDataObj);
             if (response.data.success) {
-                navigate("/admin-dashboard/employees");
+                if (formData.role === 'manager') {
+                    navigate("/admin-dashboard/managers");
+                } else {
+                    navigate("/admin-dashboard/employees");
+                }
             }
         } catch (error) {
             if (error.response && !error.response.data.success) {
@@ -187,7 +187,14 @@ const Add = () => {
                                 required
                                 className="mt-1 p-2 block w-full border border-gray-300 rounded-md">
                                 <option value="">Select Role</option>
-                                <option value="admin">Admin</option>
+                                {
+                                user ?. role === 'admin' && (
+                                    <>
+                                        <option value="admin">Admin</option>
+                                        <option value="manager">Manager</option>
+                                    </>
+                                )
+                            }
                                 <option value="employee">Employee</option>
                             </select>
                         </div>

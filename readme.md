@@ -1,59 +1,59 @@
-# Employee Management System
+# Employee Management System (MERN Stack)
 
-A comprehensive Employee Management System built with the MERN stack (MongoDB, Express, React, Node.js). This full-stack application streamlines HR processes by handling employee records, departments, attendance, leaves, and salaries, featuring a secure role-based access control system for Admins and Employees.
+A comprehensive, enterprise-ready Employee Management System (EMS) designed for efficiency and scalability. This platform streamlines HR operations, including employee record keeping, department organization, attendance tracking, leave management, and salary administration.
 
-## 🚀 Recent Updates: Cloudinary Integration
-The system now supports **Cloudinary** for scalable image hosting. Employee profile images are stored as full secure URLs in the database, allowing for seamless display across production and development environments.
+## 🌟 Latest Version Highlights
 
-*   **Scalable Storage:** Images are uploaded directly to Cloudinary.
-*   **Real-time Previews:** Added image previews in Add and Edit employee forms.
-*   **Dynamic Rendering:** Frontend handles both full Cloudinary URLs and legacy local paths.
-*   **Navbar Profile:** The dashboard now displays the logged-in user's profile image in the navigation bar.
+### 🏢 Multi-Tenancy Architecture
+The system now supports **multi-tenancy**, allowing multiple companies to use the platform independently. 
+- **Data Isolation:** Each company has its own private workspace. Admins see only their company's departments, employees, and records.
+- **Company Profile:** Company names are dynamically displayed across the dashboard, providing a branded experience for every organization.
+- **Manager Hierarchy:** Admins can designate managers who can manage their respective teams.
+
+### 📅 Advanced Attendance System
+- **Date Picking:** Admins can now mark and view attendance for any specific date (past or present).
+- **Auto-Initialization:** The system automatically initializes attendance records for all employees when a new date is accessed.
+- **History Tracking:** Employees can view their personal attendance history with a color-coded status table.
+- **Detailed Reports:** Attendance reports can be filtered by date and exported as clean, professional PDFs.
+
+### 🎨 Premium UI & Improved UX
+- **Rich Aesthetics:** Implemented a modern design system using Tailwind CSS with teal and indigo color palettes.
+- **Custom Loading States:** Added a premium, animated Loading component that provides visual feedback during all data-fetch operations.
+- **Image handling:** Fully integrated with **Cloudinary** for secure, high-speed image hosting and real-time previews.
 
 ## 🛠️ Features
 
 *   **Role-Based Access Control (RBAC):**
-    *   **Admin Dashboard:** Full control to manage employees, departments, salaries, leaves, and attendance.
-    *   **Employee Dashboard:** Employees can view their profile, check attendance history, apply for leaves, and view salary details.
-*   **Department Management:** Create, edit, and delete departments effectively.
-*   **Employee Management:** Onboard new employees with profile images, update details, and manage records.
-*   **Attendance Tracking:** Monitor daily attendance and maintain records.
-*   **Leave Management:**
-    *   Employees can submit leave requests.
-    *   Admins can view, approve, or reject requests with status updates.
-*   **Salary Management:** Define salary structures and manage updates.
-*   **Secure Authentication:** Robust login system using JWT (JSON Web Tokens) and Bcrypt for password hashing.
-*   **Modern UI:** Responsive interface built with React and Tailwind CSS, featuring smooth transitions and data tables.
+    *   **Admin:** Full system control (Add Employees/Managers, Manage Departments, Salaries, Leaves, Attendance).
+    *   **Manager:** Intermediate access to oversee team performance, manage attendance, and approve leave requests.
+    *   **Employee:** Personal dashboard (Profile, Attendance History, Leave Application, Salary Slips).
+*   **Department Management:** Structured organization with easy CRUD operations.
+*   **Leave Management:** Transparent workflow for applying, viewing, and approving leave requests.
+*   **Salary Management:** Track net pay, allowances, and deductions with history logs.
+*   **PDF Exports:** Generate instant reports for attendance and salary history.
 
 ## ⚙️ Tech Stack
 
 ### Frontend
-*   **React:** Component-based UI library.
-*   **Vite:** Fast build tool and development server.
-*   **Tailwind CSS:** Utility-first CSS framework for custom design.
-*   **React Router DOM:** For seamless client-side navigation.
-*   **Axios:** Promise-based HTTP client for API integration.
-*   **React Data Table Component:** Interactive tables for data display.
-*   **React Icons:** Comprehensive icon library.
+- **React 18 & Vite:** High-performance UI rendering and dev workflow.
+- **Tailwind CSS:** Modern, responsive styling.
+- **Axios & API Utility:** Centralized, secure backend communication with JWT interceptors.
+- **React Data Table:** Interactive, searchable data displays.
 
 ### Backend
-*   **Node.js:** JavaScript runtime environment.
-*   **Express.js:** Web framework for building RESTful APIs.
-*   **MongoDB:** NoSQL database for flexible data storage.
-*   **Mongoose:** ODM library for MongoDB interactions.
-*   **Cloudinary:** Image hosting and management service.
-*   **Multer / Multer-Storage-Cloudinary:** Middleware for handling multipart/form-data and direct Cloudinary uploads.
-*   **JWT:** For secure user authentication and authorization.
-*   **Bcrypt:** For secure password hashing.
+- **Node.js & Express:** Scalable RESTful API architecture.
+- **MongoDB & Mongoose:** NoSQL data persistence with efficient schema modeling.
+- **Cloudinary:** Cloud-based image management.
+- **JWT & Bcrypt:** Secure authentication and password protection.
 
 ## 📂 Project Structure
 
 ```
-├── backend/            # Express server, controllers, models, routes, database config
-├── frontend/           # React application, components, pages, context, assets
-├── package.json        # Root configuration and scripts
-├── readme.md           # Project documentation
-└── ...
+├── backend/            # Express server, Controllers, Models, Routes, Middlewares
+├── frontend/           # React App, Components, context, utils, assets
+├── dist/               # Production build folder (generated after npm run build)
+├── package.json        # Root config for unified project management
+└── readme.md           # Documentation
 ```
 
 ## ⚙️ Installation & Setup
@@ -64,53 +64,31 @@ git clone https://github.com/Amit-coding-world/Employee-Management-System.git
 cd Employee-Management-System
 ```
 
-### 2. Install Dependencies
+### 2. Install All Dependencies
+From the root directory, run:
 ```bash
-# Root dependencies
 npm install
-
-# Backend dependencies
-cd backend
-npm install
-cd ..
-
-# Frontend dependencies
-cd frontend
-npm install
-cd ..
 ```
 
-### 3. Environment Configuration
-Create a `.env` file in the `backend` directory with the following variables:
-```env
-PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_KEY=your_jwt_secret_key
-CLIENT_URL=http://localhost:5173
+### 3. Running the Project
 
-# Cloudinary Configuration
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-```
-
-### 4. Run the Application
-
-**Start Backend:**
+**Development Mode (Hot Reloading):**
 ```bash
-cd backend
 npm run dev
 ```
 
-**Start Frontend:**
+**Production Mode:**
+1. Build the frontend:
 ```bash
-cd frontend
-npm run dev
+npm run build
+```
+2. Start the integrated server:
+```bash
+npm run start
 ```
 
+## 🌐 Live Demo
+[Explore the Live System](https://employee-management-system-sbvn.onrender.com)
 
-## 🌐 Live URL
-[https://employee-management-system-sbvn.onrender.com](https://employee-management-system-sbvn.onrender.com)
-
-
-
+---
+Developed with ❤️ by the Amit-coding-world team.

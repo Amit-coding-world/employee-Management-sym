@@ -3,9 +3,10 @@ import Employee from "../models/Employee.js";
 
 const getAttendance = async (req, res) => {
     try {
-        const date = new Date().toISOString().split("T")[0];
+        const {date} = req.query;
+        const queryDate = date || new Date().toISOString().split("T")[0];
 
-        const attendance = await Attendance.find({date}).populate({
+        const attendance = await Attendance.find({date: queryDate, company: req.user.company._id}).populate({
             path: "employeeId",
             populate: ["department", "userId"]
         });
@@ -20,12 +21,13 @@ const getAttendance = async (req, res) => {
 const updateAttendance = async (req, res) => {
     try {
         const {employeeId} = req.params
-        const {status} = req.body
-        const date = new Date().toISOString().split('T')[0]
+        const {status, date} = req.body
+        const queryDate = date || new Date().toISOString().split('T')[0]
         const employee = await Employee.findOne({employeeId})
         const attendance = await Attendance.findOneAndUpdate({
             employeeId: employee._id,
-            date
+            date: queryDate,
+            company: req.user.company._id
         }, {
             status
         }, {new: true})
@@ -43,7 +45,9 @@ const attendanceReport = async (req, res) => {
             limit = 5,
             skip = 0
         } = req.query;
-        const query = {};
+        const query = {
+            company: req.user.company._id
+        };
         if (date) {
             query.date = date;
         }
@@ -77,7 +81,7 @@ const getAttendanceByEmployeeId = async (req, res) => {
     try {
         const {id} = req.params;
         const date = new Date().toISOString().split("T")[0];
-        const attendance = await Attendance.findOne({employeeId: id, date});
+        const attendance = await Attendance.findOne({employeeId: id, date, company: req.user.company._id});
         return res.status(200).json({success: true, attendance});
     } catch (error) {
         return res.status(500).json({success: false, message: error.message});
@@ -91,7 +95,7 @@ const getAttendanceByUser = async (req, res) => {
             return res.status(404).json({success: false, message: "Employee not found"});
         }
         const date = new Date().toISOString().split("T")[0];
-        const attendance = await Attendance.findOne({employeeId: employee._id, date});
+        const attendance = await Attendance.findOne({employeeId: employee._id, date, company: req.user.company._id});
         return res.status(200).json({success: true, attendance});
     } catch (error) {
         return res.status(500).json({success: false, message: error.message});
