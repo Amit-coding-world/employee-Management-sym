@@ -39,30 +39,40 @@ The system now supports **multi-tenancy**, allowing multiple companies to use th
 - **Tailwind CSS:** Modern, responsive styling.
 - **Axios & API Utility:** Centralized, secure backend communication with JWT interceptors.
 - **React Data Table:** Interactive, searchable data displays.
+- **Redux Toolkit:** State management for complex data flows.
 
 ### Backend
 - **Node.js & Express:** Scalable RESTful API architecture.
 - **MongoDB & Mongoose:** NoSQL data persistence with efficient schema modeling.
 - **Cloudinary:** Cloud-based image management.
 - **JWT & Bcrypt:** Secure authentication and password protection.
+-
 
 ## 📂 Project Structure
 
 ```
-├── backend/            # Express server, Controllers, Models, Routes, Middlewares
-├── frontend/           # React App, Components, context, utils, assets
-├── dist/               # Production build folder (generated after npm run build)
-├── package.json        # Root config for unified project management
-└── readme.md           # Documentation
+Employee-Management-System/
+├── frontend/                 # React application (user interface)
+│   ├── src/
+│   │   ├── components/      # Reusable components
+│   │   ├── pages/           # Application pages
+│   │   └── services/        # API communication
+│   └── .env                 # Configuration file
+│
+└── backend/                 # Node.js server
+    ├── models/              # Database schemas
+    ├── routes/              # API endpoints
+    ├── controllers/         # Business logic
+    └── .env                 # Configuration file
 ```
 
 ## ⚙️ Installation & Setup
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/Amit-coding-world/Employee-Management-System.git
-cd Employee-Management-System
-```
+### Prerequisites
+- Node.js (v16 or higher)
+- MongoDB (Local or Atlas account)
+- Cloudinary account
+- Git
 
 ### 2. Install All Dependencies
 From the root directory, run:
