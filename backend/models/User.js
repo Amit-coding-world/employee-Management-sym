@@ -1,17 +1,15 @@
 import mongoose from "mongoose";
 
-
 const userSchema = new mongoose.Schema({
-    // In Mongoose, a schema is a blueprint for MongoDB documents that defines field names, data types, validation rules, and structure.
     name: {
         type: String,
         required: true
     },
     email: {
-        type: String, // js support string type,an email is stored as a string
+        type: String,
         required: true,
         unique: true,
-        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ // basic email regex
+        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     },
     password: {
         type: String,
@@ -25,17 +23,17 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     profileImage: {
-        type: String, // URL to the profile image
+        type: String
     },
     company: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Company"
     },
     resetOtp: {
-        type: String, // OTP for password reset
+        type: String
     },
     resetOtpExpiry: {
-        type: Date, // OTP expiry time
+        type: Date
     },
     createAt: {
         type: Date,
