@@ -4,11 +4,29 @@ import api from "../../utils/api";
 import {useNavigate} from "react-router-dom";
 
 const Add = () => {
-    const {user} = useAuth();
-    const [leave, setLeave] = useState({userId: user._id});
+    const {user, loading: authLoading} = useAuth();
+    const [leave, setLeave] = useState({
+        userId: "",
+        leaveType: "",
+        startDate: "",
+        endDate: "",
+        reason: ""
+    });
     const [loading, setLoading] = useState(false);
-
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) {
+            setLeave((prev) => ({
+                ...prev,
+                userId: user._id
+            }));
+        }
+    }, [user]);
+
+    if (authLoading) {
+        return <Loading />;
+    }
 
     const handleChange = (e) => {
         const {name, value} = e.target;

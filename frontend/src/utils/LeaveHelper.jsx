@@ -16,16 +16,17 @@ export const columns = [
 ];
 
 // Button component
-export const LeaveButtons = ({ id}) => {
+export const LeaveButtons = ({ id }) => {
   const navigate = useNavigate();
 
-  const handleView = (id) => {
-    navigate(`/admin-dashboard/leaves/${id}`);};
+  const handleView = () => {
+    navigate(`/admin-dashboard/leaves/${id}`);
+  };
 
   return (
     <button
       className="px-4 py-1 bg-teal-500 rounded text-white hover:bg-teal-600"
-      onClick={() => handleView(id)}
+      onClick={handleView}
     >
       View
     </button>

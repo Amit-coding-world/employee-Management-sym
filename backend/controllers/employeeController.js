@@ -3,7 +3,12 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import upload from "../middleware/cloudinaryUpload.js";
 import Department from '../models/Department.js'
+import mongoose from "mongoose";
 
+const getCompanyId = (user) => {
+    if (!user || !user.company) return null;
+    return user.company._id || user.company;
+};
 
 const addEmployee = async (req, res) => {
     try {
@@ -21,37 +26,23 @@ const addEmployee = async (req, res) => {
             role
         } = req.body;
 
-        const requestingUserRole = req.user.role;
-
-        if (role === 'manager' && requestingUserRole !== 'admin') {
-            return res.status(403).json({success: false, error: "Access Denied: Only Admins can add Managers"});
-        }
-        if (role === 'admin' && requestingUserRole !== 'admin') {
-            return res.status(403).json({success: false, error: "Access Denied: Only Admins can add Admins"});
-        }
-        if (requestingUserRole === 'manager' && role !== 'employee') {
-            return res.status(403).json({success: false, error: "Access Denied: Managers can only add Employees"});
+        const userCompanyId = getCompanyId(req.user);
+        if (!userCompanyId) {
+             return res.status(400).json({success: false, error: "Company context missing"});
         }
 
-
-        const user = await User.findOne({email});
-        if (user) {
-            return res.status(400).json({success: false, error: "User already registered in Employee"});
+        const userExists = await User.findOne({email});
+        if (userExists) {
+            return res.status(400).json({success: false, error: "Email already registered"});
         }
 
         const hashPassword = await bcrypt.hash(password, 10);
 
-
-        // Ensure Cloudinary URL is present
         let profileImageUrl = '';
         if (req.file && req.file.path) {
             profileImageUrl = req.file.path;
         } else if (req.file && req.file.url) {
             profileImageUrl = req.file.url;
-        } else { // If no file uploaded, you can set a default image URL or return an error
-            profileImageUrl = '';
-            // Optionally, return error if image is required
-            // return res.status(400).json({ success: false, error: 'Image upload failed' });
         }
 
         const newUser = new User({
@@ -60,9 +51,8 @@ const addEmployee = async (req, res) => {
             password: hashPassword,
             role,
             profileImage: profileImageUrl,
-            company: req.user.company._id
+            company: userCompanyId
         });
-
 
         const savedUser = await newUser.save();
 
@@ -75,18 +65,20 @@ const addEmployee = async (req, res) => {
             designation,
             department,
             salary,
-            company: req.user.company._id
+            company: userCompanyId
         });
         await newEmployee.save();
         return res.status(200).json({success: true, message: "Employee Created Successfully"})
     } catch (error) {
-        return res.status(500).json({success: false, error: "Server error in adding employee"})
+        console.error("addEmployee Error:", error);
+        return res.status(500).json({success: false, error: error.message || "Server error in adding employee"})
     }
 };
 
 const getEmployees = async (req, res) => {
     try {
-        const employees = await Employee.find({company: req.user.company._id}).populate('userId', {password: 0}).populate("department");
+        const userCompanyId = getCompanyId(req.user);
+        const employees = await Employee.find({company: userCompanyId}).populate('userId', {password: 0}).populate("department");
         return res.status(200).json({success: true, employees});
     } catch (error) {
         return res.status(500).json({
@@ -95,9 +87,15 @@ const getEmployees = async (req, res) => {
         });
     }
 }
+
 const getEmployee = async (req, res) => {
     const {id} = req.params;
     try {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({success: false, error: "Invalid ID format"});
+        }
+
+        const userCompanyId = getCompanyId(req.user);
         let employee;
         employee = await Employee.findById(id).populate('userId', {password: 0}).populate("department");
 
@@ -105,15 +103,15 @@ const getEmployee = async (req, res) => {
             employee = await Employee.findOne({userId: id}).populate('userId', {password: 0}).populate("department");
         }
 
-        if (employee && employee.company && employee.company.toString() !== req.user.company._id.toString()) {
-            return res.status(403).json({success: false, error: "Access Denied: Employee belongs to another company"});
+        if (employee && employee.company && userCompanyId && employee.company.toString() !== userCompanyId.toString()) {
+            return res.status(403).json({success: false, error: "Access Denied"});
         }
 
         return res.status(200).json({success: true, employee});
     } catch (error) {
         return res.status(500).json({
             success: false,
-            error: error.message || "get employees server error"
+            error: error.message || "get employee detail server error"
         });
     }
 }
@@ -121,7 +119,9 @@ const getEmployee = async (req, res) => {
 const updateEmployee = async (req, res) => {
     try {
         const {id} = req.params;
-
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({success: false, error: "Invalid ID format"});
+        }
 
         const {
             name,
@@ -136,8 +136,9 @@ const updateEmployee = async (req, res) => {
             return res.status(404).json({success: false, error: "employee not found"});
         }
 
-        if (employee.company && employee.company.toString() !== req.user.company._id.toString()) {
-            return res.status(403).json({success: false, error: "Access Denied: Employee belongs to another company"});
+        const userCompanyId = getCompanyId(req.user);
+        if (employee.company && userCompanyId && employee.company.toString() !== userCompanyId.toString()) {
+            return res.status(403).json({success: false, error: "Access Denied"});
         }
 
         const user = await User.findById(employee.userId);
@@ -152,27 +153,23 @@ const updateEmployee = async (req, res) => {
             profileImageUrl = req.file.url;
         }
 
-        const updatedUser = await User.findByIdAndUpdate(employee.userId, {
+        await User.findByIdAndUpdate(employee.userId, {
             name,
             profileImage: profileImageUrl
-        }, {new: true})
-        const updatedEmployee = await Employee.findByIdAndUpdate(id, {
+        })
+        await Employee.findByIdAndUpdate(id, {
             maritalStatus,
             designation,
             salary,
             department
-        }, {new: true})
+        })
 
-        if (! updatedEmployee || ! updatedUser) {
-            return res.status(404).json({success: false, error: "document not found"});
-        }
         return res.status(200).json({success: true, message: "employee update"});
-
-
     } catch (error) {
-        return res.status(500).json({success: false, error: "update employees server error"})
+        return res.status(500).json({success: false, error: error.message || "update employees server error"})
     }
 }
+
 const fetchEmployeesByDepId = async (req, res) => {
     const {id} = req.params;
     try {
@@ -181,10 +178,11 @@ const fetchEmployeesByDepId = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            error: error.message || "get employeesByDepId server error"
+            error: error.message || "fetch employees by department failed"
         });
     }
 }
+
 export {
     addEmployee,
     upload,

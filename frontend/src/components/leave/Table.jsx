@@ -34,7 +34,7 @@ const Table = () => {
                         department: leave ?. employeeId ?. department ?. dep_name || "N/A",
                         days,
                         status: leave.status,
-                        action: <LeaveButtons _id={
+                        action: <LeaveButtons id={
                             leave._id
                         }/>
                     };

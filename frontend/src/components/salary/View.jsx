@@ -12,7 +12,7 @@ const View = () => {
     const [loading, setLoading] = useState(false);
     const {id} = useParams();
     const navigate = useNavigate();
-    const {user} = useAuth()
+    const {user, loading: authLoading} = useAuth();
 
     const fetchSalaries = async () => {
         setLoading(true);
@@ -25,8 +25,9 @@ const View = () => {
                 setFilteredSalaries(response.data.salary);
             }
         } catch (error) {
+            console.error(error.message);
             if (error.response && !error.response.data.success) {
-                alert(error.message);
+                alert(error.response.data.error || "Salary fetch failed");
             }
         } finally {
             setLoading(false);
@@ -34,8 +35,10 @@ const View = () => {
     };
 
     useEffect(() => {
-        fetchSalaries();
-    }, []);
+        if (user) {
+            fetchSalaries();
+        }
+    }, [user, id]);
 
     const filterSalaries = (q) => {
         const filteredRecords = salaries.filter((record) => record.employeeId ?. employeeId ?. toLowerCase().includes(q.toLowerCase()));
@@ -79,7 +82,7 @@ const View = () => {
         doc.save(`Salary_History_${id}.pdf`);
     };
 
-    if (loading) {
+    if (authLoading || loading) {
         return <Loading/>;
     }
 
