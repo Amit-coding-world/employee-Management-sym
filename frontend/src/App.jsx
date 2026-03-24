@@ -95,6 +95,8 @@ requiredRole={
                         element={<Detail/>}></Route>
                     <Route path="/admin-dashboard/employees/leaves/:id"
                         element={<LeaveList/>}></Route>
+                    <Route path="/admin-dashboard/leaves/add/:id"
+                        element={<AddLeave/>}></Route>
 
                     <Route path="/admin-dashboard/setting"
                         element={<Setting/>}></Route>

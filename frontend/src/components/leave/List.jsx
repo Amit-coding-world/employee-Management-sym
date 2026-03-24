@@ -50,6 +50,8 @@ const List = () => {
         switch (status) {
             case "Approved": colorClass = "bg-green-100 text-green-700";
                 break;
+            case "Manager Approved": colorClass = "bg-blue-100 text-blue-700";
+                break;
             case "Rejected": colorClass = "bg-red-100 text-red-700";
                 break;
             default: colorClass = "bg-yellow-100 text-yellow-700";
@@ -74,6 +76,12 @@ const List = () => {
             <div className="flex justify-between items-center my-4">
                 <input type="text" placeholder="Search By Employee Name" className="px-4 py-1 border border-gray-300 rounded-md"
                     onChange={handleSearch}/>
+                {id === user._id && (
+                    <button onClick={() => navigate("/employee-dashboard/add-leave")}
+                        className="px-4 py-1 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition">
+                        Add New Leave
+                    </button>
+                )}
             </div>
 
             <div className="overflow-x-auto">

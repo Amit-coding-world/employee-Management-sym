@@ -4,11 +4,13 @@ import {LeaveButtons, columns} from "../../utils/LeaveHelper";
 import api from "../../utils/api";
 import DataTable from "react-data-table-component";
 import Loading from "../Loading";
+import {useAuth} from "../../context/authContext";
 
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 const Table = () => {
+    const {user} = useAuth();
     const navigate = useNavigate();
     const [leaves, setLeaves] = useState([]);
     const [filteredLeaves, setFilteredLeaves] = useState([]);
@@ -135,6 +137,12 @@ const Table = () => {
                         }>
                             Pending
                         </button>
+                        <button className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            onClick={
+                                () => filterByButton("Manager Approved")
+                        }>
+                            M-Approved
+                        </button>
                         <button className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600"
                             onClick={
                                 () => filterByButton("Approved")
@@ -152,9 +160,11 @@ const Table = () => {
             </div>
 
             <div className="mt-3">
-                <DataTable columns={columns}
+                <DataTable 
+                    columns={user.role !== 'employee' ? columns : columns.filter(col => col.name !== "Action")}
                     data={filteredLeaves}
-                    pagination/>
+                    pagination
+                />
             </div>
         </div>
     );

@@ -54,7 +54,7 @@ export const ManagerButtons = ({_id}) => {
             </button>
             <button className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
                 onClick={
-                    () => navigate(`/admin-dashboard/employees/leaves/${_id}`)
+                    () => navigate(`/admin-dashboard/leaves/add/${_id}`)
             }>
                 Leave
             </button>

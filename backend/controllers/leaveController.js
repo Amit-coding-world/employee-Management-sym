@@ -87,7 +87,7 @@ const getLeaves = async (req, res) => {
                     select: 'dep_name'
                 }, {
                     path: 'userId',
-                    select: 'name'
+                    select: 'name role profileImage'
                 }
             ]
         })
@@ -112,7 +112,7 @@ const getLeaveDetail = async (req, res) => {
                     select: 'dep_name'
                 }, {
                     path: 'userId',
-                    select: 'name profileImage'
+                    select: 'name profileImage role'
                 }
             ]
         })
@@ -138,8 +138,15 @@ const updateLeave = async (req, res) => {
             return res.status(400).json({success: false, error: "Invalid ID format"});
         }
 
-        const leave = await Leave.findById(id);
-        if (! leave) {
+        const leave = await Leave.findById(id).populate({
+            path: 'employeeId',
+            populate: {
+                path: 'userId',
+                select: 'role'
+            }
+        });
+
+        if (!leave) {
             return res.status(404).json({success: false, error: "leave not found"});
         }
 
@@ -148,16 +155,42 @@ const updateLeave = async (req, res) => {
             return res.status(403).json({success: false, error: "Access Denied - Cross Company"});
         }
 
-        // Single-tier: Only Admins can approve or reject.
-        if (req.user.role !== 'admin') {
-            return res.status(403).json({success: false, error: "Access Denied - Admin Only Approval"});
+        const applicantRole = leave.employeeId?.userId?.role;
+        const applicantUserId = leave.employeeId?.userId?._id?.toString();
+        const userRole = req.user.role;
+        const currentUserId = req.user._id.toString();
+
+        if (userRole === 'manager') {
+            // Managers cannot approve their own leaves
+            if (applicantUserId === currentUserId) {
+                return res.status(403).json({success: false, error: "You cannot approve your own leave"});
+            }
+
+            // Managers cannot approve other managers' leaves
+            if (applicantRole === 'manager') {
+                return res.status(403).json({success: false, error: "Only admins can approve manager leaves"});
+            }
+
+            // Managers can only update PENDING leaves
+            if (leave.status !== 'Pending') {
+                return res.status(400).json({success: false, error: "Manager can only action Pending leaves"});
+            }
+            if (status !== 'Approved' && status !== 'Rejected') {
+                return res.status(400).json({success: false, error: "Invalid status selection"});
+            }
+            // Map 'Approved' to 'Manager Approved' for managers
+            const finalStatus = status === 'Approved' ? 'Manager Approved' : 'Rejected';
+            await Leave.findByIdAndUpdate(id, {status: finalStatus});
+        } else if (userRole === 'admin') {
+            // Admins can approve or reject anything
+            if (status !== 'Approved' && status !== 'Rejected') {
+                return res.status(400).json({success: false, error: "Invalid status selection"});
+            }
+            await Leave.findByIdAndUpdate(id, {status});
+        } else {
+            return res.status(403).json({success: false, error: "Access Denied"});
         }
 
-        if (status !== 'Approved' && status !== 'Rejected') {
-            return res.status(400).json({success: false, error: "Invalid status transition"});
-        }
-
-        await Leave.findByIdAndUpdate(id, {status});
         return res.status(200).json({success: true});
     } catch (error) {
         console.error("updateLeave Error:", error);

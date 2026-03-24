@@ -1,9 +1,10 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {useAuth} from "../../context/authContext";
 import api from "../../utils/api";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 const Add = () => {
+    const {id: externalUserId} = useParams();
     const {user, loading: authLoading} = useAuth();
     const [leave, setLeave] = useState({
         userId: "",
@@ -19,10 +20,10 @@ const Add = () => {
         if (user) {
             setLeave((prev) => ({
                 ...prev,
-                userId: user._id
+                userId: externalUserId || user._id
             }));
         }
-    }, [user]);
+    }, [user, externalUserId]);
 
     if (authLoading) {
         return <Loading />;
@@ -43,9 +44,11 @@ const Add = () => {
         try {
             const response = await api.post(`/leave/add`, leave);
             if (response.data.success) {
-                navigate(`/employee-dashboard/leaves/${
-                    user._id
-                }`);
+                if (externalUserId) {
+                    navigate("/admin-dashboard/leaves");
+                } else {
+                    navigate(`/employee-dashboard/leaves/${user._id}`);
+                }
             }
         } catch (error) {
             console.error(error.message);

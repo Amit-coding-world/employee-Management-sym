@@ -2,15 +2,25 @@ import Department from "../models/Department.js";
 import Employee from "../models/Employee.js";
 import Leave from "../models/Leave.js";
 
+const getCompanyId = (user) => {
+    if (!user || !user.company) return null;
+    return user.company._id || user.company;
+};
+
 const getSummary = async (req, res) => {
     try {
-        const totalEmployees = await Employee.countDocuments({company: req.user.company._id});
-        const totalDepartments = await Department.countDocuments({company: req.user.company._id});
+        const userCompanyId = getCompanyId(req.user);
+        if (!userCompanyId) {
+            return res.status(400).json({success: false, error: "Company context missing"});
+        }
+
+        const totalEmployees = await Employee.countDocuments({company: userCompanyId});
+        const totalDepartments = await Department.countDocuments({company: userCompanyId});
 
         const totalSalaries = await Employee.aggregate([
             {
                 $match: {
-                    company: req.user.company._id
+                    company: userCompanyId
                 }
             }, {
                 $group: {
@@ -23,18 +33,9 @@ const getSummary = async (req, res) => {
         ]);
 
         const leaveStatus = await Leave.aggregate([
-            {
-                $lookup: {
-                    from: "employees",
-                    localField: "employeeId",
-                    foreignField: "_id",
-                    as: "employee"
-                }
-            }, {
-                $unwind: "$employee"
-            }, {
+             {
                 $match: {
-                    "employee.company": req.user.company._id
+                    company: userCompanyId
                 }
             }, {
                 $group: {
@@ -53,8 +54,10 @@ const getSummary = async (req, res) => {
             ),
             approved: leaveStatus.find((item) => item._id === "Approved") ?. count || 0,
             rejected: leaveStatus.find((item) => item._id === "Rejected") ?. count || 0,
-            pending: leaveStatus.find((item) => item._id === "Pending") ?. count || 0
+            pending: (leaveStatus.find((item) => item._id === "Pending") ?. count || 0) + 
+                     (leaveStatus.find((item) => item._id === "Manager Approved") ?. count || 0)
         };
+
         return res.status(200).json({
             success: true,
             totalEmployees,
@@ -63,6 +66,7 @@ const getSummary = async (req, res) => {
             leaveSummary
         });
     } catch (error) {
+        console.error("Dashboard Summary Error:", error);
         return res.status(500).json({success: false, error: "dashboard summary error"});
     }
 };

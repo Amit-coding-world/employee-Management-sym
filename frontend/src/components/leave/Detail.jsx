@@ -56,7 +56,14 @@ const Detail = () => {
         return <div className="text-center mt-10 text-red-600">Leave not found</div>;
     }
 
-    const canAction = user && leave && user.role === 'admin' && leave.status === 'Pending';
+    const canAction = user && leave && (
+        (user.role === 'manager' && 
+         leave.status === 'Pending' && 
+         leave.employeeId?.userId?.role !== 'manager' && 
+         leave.employeeId?.userId?._id?.toString() !== user._id.toString()
+        ) ||
+        (user.role === 'admin' && (leave.status === 'Pending' || leave.status === 'Manager Approved'))
+    );
 
     return (
         <div className="max-w-4xl mx-auto mt-10 bg-white p-8 rounded-md shadow-md">
@@ -88,7 +95,7 @@ const Detail = () => {
                         {canAction ? (
                             <div className="flex space-x-2">
                                 <button disabled={updating} onClick={() => changeStatus(leave._id, "Approved")} className={`bg-green-500 text-white px-4 py-1 rounded-md ${updating ? "opacity-50 cursor-not-allowed" : "hover:bg-green-600"}`}>
-                                    Approve
+                                    {user.role === 'manager' ? "Manager Approve" : "Approve"}
                                 </button>
                                 <button disabled={updating} onClick={() => changeStatus(leave._id, "Rejected")} className={`bg-red-500 text-white px-4 py-1 rounded-md ${updating ? "opacity-50 cursor-not-allowed" : "hover:bg-red-700"}`}>
                                     Reject
