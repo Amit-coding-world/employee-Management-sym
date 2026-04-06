@@ -30,27 +30,27 @@ const Sidebar = () => {
 
             {/* Navigation */}
             <div className="space-y-2 mt-2 px-2">
-                <NavLink to="/employee-dashboard" end
-                    className={
-                        ({isActive}) => `${
-                            isActive ? "bg-teal-500" : "hover:bg-gray-700"
-                        } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-                }>
-                    <FaTachometerAlt/>
-                    <span className="hidden md:inline">Dashboard</span>
-                </NavLink>
-
                 {user.role === "manager" && (
                     <div 
-                        className="items-center justify-between border-t border-gray-700 my-2 pt-2 px-3 text-xs text-gray-400 cursor-pointer hidden md:flex hover:text-white transition-colors"
+                        className="items-center justify-between border-gray-700 my-2 pt-2 px-3 text-xs text-gray-400 cursor-pointer hidden md:flex hover:text-white transition-colors"
                         onClick={() => setIsMyDetailsOpen(!isMyDetailsOpen)}
                     >
-                        <span>My Details</span>
+                        <span className="text-lg">My Details</span>
                         {isMyDetailsOpen ? <FaChevronUp size={10} /> : <FaChevronDown size={10} />}
                     </div>
                 )}
 
                 <div className={`space-y-2 ${user.role === "manager" && !isMyDetailsOpen ? 'hidden md:hidden' : 'block'}`}>
+                    <NavLink to="/employee-dashboard" end
+                        className={
+                            ({isActive}) => `${
+                                isActive ? "bg-teal-500" : "hover:bg-gray-700"
+                            } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
+                    }>
+                        <FaTachometerAlt/>
+                        <span className="hidden md:inline">Dashboard</span>
+                    </NavLink>
+
                     <NavLink to={
                             `/employee-dashboard/profile/${
                                 user._id
@@ -106,17 +106,17 @@ const Sidebar = () => {
                         <FaMoneyBillWave/>
                         <span className="hidden md:inline">Salary</span>
                     </NavLink>
-                </div>
 
-                <NavLink to="/employee-dashboard/setting"
-                    className={
-                        ({isActive}) => `${
-                            isActive ? "bg-teal-500" : "hover:bg-gray-700"
-                        } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-                }>
-                    <FaCogs/>
-                    <span className="hidden md:inline">Settings</span>
-                </NavLink>
+                    <NavLink to="/employee-dashboard/setting"
+                        className={
+                            ({isActive}) => `${
+                                isActive ? "bg-teal-500" : "hover:bg-gray-700"
+                            } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
+                    }>
+                        <FaCogs/>
+                        <span className="hidden md:inline">Settings</span>
+                    </NavLink>
+                </div>
 
                 {/* Manager Specific Links */}
                 {
@@ -125,7 +125,7 @@ const Sidebar = () => {
                         className="items-center justify-between border-t border-gray-700 my-2 pt-2 px-3 text-xs text-gray-400 cursor-pointer hidden md:flex hover:text-white transition-colors"
                         onClick={() => setIsTeamManagementOpen(!isTeamManagementOpen)}
                     >
-                        <span>Team Management</span>
+                        <span className="text-lg">Team Management</span>
                         {isTeamManagementOpen ? <FaChevronUp size={10} /> : <FaChevronDown size={10} />}
                     </div>
                     <div className={`space-y-2 ${isTeamManagementOpen ? 'block' : 'block md:hidden'}`}>
@@ -136,7 +136,7 @@ const Sidebar = () => {
                                 } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
                         }>
                             <FaCalendarAlt/>
-                            <span className="hidden md:inline">Leaves</span>
+                            <span className="hidden md:inline">Team Leaves</span>
                         </NavLink>
                         <NavLink to="/admin-dashboard/attendance"
                             className={
@@ -145,7 +145,7 @@ const Sidebar = () => {
                                 } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
                         }>
                             <FaCalendarAlt/>
-                            <span className="hidden md:inline">Attendance</span>
+                            <span className="hidden md:inline">Team Attendance</span>
                         </NavLink>
                     </div>
                 </>)
