@@ -10,47 +10,61 @@ const List = () => {
     const [loading, setLoading] = useState(false);
     const [filteredManagers, setFilteredManagers] = useState([]);
 
-    useEffect(() => {
-        const fetchManagers = async () => {
-            setLoading(true);
+    const onManagerDelete = async (id) => {
+        if (window.confirm("Are you sure you want to delete this manager?")) {
             try {
-                const response = await api.get('/employee');
+                const response = await api.delete(`/employee/${id}`);
                 if (response.data.success) {
-                    let sno = 1;
-                    const data = response.data.employees.filter(emp => emp.userId.role === 'manager').map((emp) => ({
-                        _id: emp._id,
-                        sno: sno++,
-                        dep_name: emp ?. department ?. dep_name || "N/A",
-                        name: emp ?. userId ?. name || "N/A",
-                        dob: emp ?. dob ? new Date(emp.dob).toLocaleDateString() : "N/A",
-                        profileImage: (
-                            <img width={40}
-                                className="rounded-full"
-                                src={
-                                    emp ?. userId ?. profileImage ? (emp.userId.profileImage.startsWith("http") ? emp.userId.profileImage : `${BASE_URL}/${
-                                        emp.userId.profileImage
-                                    }`) : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                                }
-                                alt={
-                                    emp ?. userId ?. name || "Manager"
-                                }/>
-                        ),
-                        action: <ManagerButtons _id={
-                            emp._id
-                        }/>
-                    }));
-                    setManagers(data);
-                    setFilteredManagers(data);
+                    fetchManagers();
                 }
             } catch (error) {
-                console.error(error.message);
                 if (error.response && !error.response.data.success) {
-                    alert(error.response.data.error);
+                    alert(error.response.data.error || "Failed to delete manager");
                 }
-            } finally {
-                setLoading(false);
             }
-        };
+        }
+    };
+
+    const fetchManagers = async () => {
+        setLoading(true);
+        try {
+            const response = await api.get('/employee');
+            if (response.data.success) {
+                let sno = 1;
+                const data = response.data.employees.filter(emp => emp.userId.role === 'manager').map((emp) => ({
+                    _id: emp._id,
+                    sno: sno++,
+                    dep_name: emp ?. department ?. dep_name || "N/A",
+                    name: emp ?. userId ?. name || "N/A",
+                    dob: emp ?. dob ? new Date(emp.dob).toLocaleDateString() : "N/A",
+                    profileImage: (
+                        <img width={40}
+                            className="rounded-full"
+                            src={
+                                emp ?. userId ?. profileImage ? (emp.userId.profileImage.startsWith("http") ? emp.userId.profileImage : `${BASE_URL}/${
+                                    emp.userId.profileImage
+                                }`) : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                            }
+                            alt={
+                                emp ?. userId ?. name || "Manager"
+                            }/>
+                    ),
+                    action: <ManagerButtons _id={emp._id} onManagerDelete={onManagerDelete} />
+                }));
+                setManagers(data);
+                setFilteredManagers(data);
+            }
+        } catch (error) {
+            console.error(error.message);
+            if (error.response && !error.response.data.success) {
+                alert(error.response.data.error);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchManagers();
     }, []);
 

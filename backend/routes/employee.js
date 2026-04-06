@@ -6,7 +6,8 @@ import {
     getEmployees,
     getEmployee,
     updateEmployee,
-    fetchEmployeesByDepId
+    fetchEmployeesByDepId,
+    deleteEmployee
 } from '../controllers/employeeController.js';
 
 
@@ -15,6 +16,7 @@ router.get('/', authMiddleware, getEmployees)
 router.post('/add', authMiddleware, upload.single('image'), addEmployee);
 router.get('/:id', authMiddleware, getEmployee)
 router.put('/:id', authMiddleware, upload.single('image'), updateEmployee)
+router.delete('/:id', authMiddleware, deleteEmployee)
 router.get('/department/:id', authMiddleware, fetchEmployeesByDepId)
 
 export default router;

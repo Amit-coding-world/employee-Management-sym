@@ -11,47 +11,61 @@ const List = () => {
     const [empLoading, setEmpLoading] = useState(false);
     const [filteredEmployee, setFilteredEmployees] = useState([]);
 
-    useEffect(() => {
-        const fetchEmployees = async () => {
-            setEmpLoading(true);
+    const onEmployeeDelete = async (id) => {
+        if (window.confirm("Are you sure you want to delete this employee?")) {
             try {
-                const response = await api.get('/employee');
+                const response = await api.delete(`/employee/${id}`);
                 if (response.data.success) {
-                    let sno = 1;
-                    const data = response.data.employees.filter(emp => emp.userId.role === 'employee').map((emp) => ({
-                        _id: emp._id,
-                        sno: sno++,
-                        dep_name: emp ?. department ?. dep_name || "N/A",
-                        name: emp ?. userId ?. name || "N/A",
-                        dob: emp ?. dob ? new Date(emp.dob).toLocaleDateString() : "N/A",
-                        profileImage: (
-                            <img width={40}
-                                className="rounded-full"
-                                src={
-                                    emp ?. userId ?. profileImage ? (emp.userId.profileImage.startsWith("http") ? emp.userId.profileImage : `${BASE_URL}/${
-                                        emp.userId.profileImage
-                                    }`) : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                                }
-                                alt={
-                                    emp ?. userId ?. name || "Employee"
-                                }/>
-                        ),
-                        action: <EmployeeButtons _id={
-                            emp._id
-                        }/>
-                    }));
-                    setEmployees(data);
-                    setFilteredEmployees(data);
+                    fetchEmployees();
                 }
             } catch (error) {
-                console.error(error.message);
                 if (error.response && !error.response.data.success) {
-                    alert(error.response.data.error);
+                    alert(error.response.data.error || "Failed to delete employee");
                 }
-            } finally {
-                setEmpLoading(false);
             }
-        };
+        }
+    };
+
+    const fetchEmployees = async () => {
+        setEmpLoading(true);
+        try {
+            const response = await api.get('/employee');
+            if (response.data.success) {
+                let sno = 1;
+                const data = response.data.employees.filter(emp => emp.userId.role === 'employee').map((emp) => ({
+                    _id: emp._id,
+                    sno: sno++,
+                    dep_name: emp ?. department ?. dep_name || "N/A",
+                    name: emp ?. userId ?. name || "N/A",
+                    dob: emp ?. dob ? new Date(emp.dob).toLocaleDateString() : "N/A",
+                    profileImage: (
+                        <img width={40}
+                            className="rounded-full"
+                            src={
+                                emp ?. userId ?. profileImage ? (emp.userId.profileImage.startsWith("http") ? emp.userId.profileImage : `${BASE_URL}/${
+                                    emp.userId.profileImage
+                                }`) : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                            }
+                            alt={
+                                emp ?. userId ?. name || "Employee"
+                            }/>
+                    ),
+                    action: <EmployeeButtons _id={emp._id} onEmployeeDelete={onEmployeeDelete} />
+                }));
+                setEmployees(data);
+                setFilteredEmployees(data);
+            }
+        } catch (error) {
+            console.error(error.message);
+            if (error.response && !error.response.data.success) {
+                alert(error.response.data.error);
+            }
+        } finally {
+            setEmpLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchEmployees();
     }, []);
 

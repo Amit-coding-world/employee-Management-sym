@@ -183,11 +183,41 @@ const fetchEmployeesByDepId = async (req, res) => {
     }
 }
 
+const deleteEmployee = async (req, res) => {
+    try {
+        const {id} = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({success: false, error: "Invalid ID format"});
+        }
+
+        const employee = await Employee.findById(id);
+        if (!employee) {
+            return res.status(404).json({success: false, error: "employee not found"});
+        }
+
+        const userCompanyId = getCompanyId(req.user);
+        if (employee.company && userCompanyId && employee.company.toString() !== userCompanyId.toString()) {
+            return res.status(403).json({success: false, error: "Access Denied"});
+        }
+
+        await Employee.findByIdAndDelete(id);
+        
+        if (employee.userId) {
+            await User.findByIdAndDelete(employee.userId);
+        }
+
+        return res.status(200).json({success: true, message: "employee deleted successfully"});
+    } catch (error) {
+        return res.status(500).json({success: false, error: error.message || "delete employee server error"})
+    }
+}
+
 export {
     addEmployee,
     upload,
     getEmployees,
     getEmployee,
     updateEmployee,
-    fetchEmployeesByDepId
+    fetchEmployeesByDepId,
+    deleteEmployee
 };

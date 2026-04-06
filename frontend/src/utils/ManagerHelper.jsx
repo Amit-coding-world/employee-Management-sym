@@ -30,33 +30,29 @@ export const columns = [
     },
 ];
 
-export const ManagerButtons = ({_id}) => {
+export const ManagerButtons = ({_id, onManagerDelete}) => {
     const navigate = useNavigate();
     return (
         <div className="flex space-x-3">
             <button className="px-3 py-1 bg-teal-600 text-white rounded hover:bg-teal-700 transition"
-                onClick={
-                    () => navigate(`/admin-dashboard/managers/${_id}`)
-            }>
+                onClick={() => navigate(`/admin-dashboard/managers/${_id}`)}>
                 View
             </button>
             <button className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
-                onClick={
-                    () => navigate(`/admin-dashboard/managers/edit/${_id}`)
-            }>
+                onClick={() => navigate(`/admin-dashboard/managers/edit/${_id}`)}>
                 Edit
             </button>
             <button className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
-                onClick={
-                    () => navigate(`/admin-dashboard/employees/salary/${_id}`)
-            }>
+                onClick={() => navigate(`/admin-dashboard/employees/salary/${_id}`)}>
                 Salary
             </button>
             <button className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
-                onClick={
-                    () => navigate(`/admin-dashboard/leaves/add/${_id}`)
-            }>
+                onClick={() => navigate(`/admin-dashboard/leaves/add/${_id}`)}>
                 Leave
+            </button>
+            <button className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition"
+                onClick={() => onManagerDelete(_id)}>
+                Delete
             </button>
         </div>
     );
