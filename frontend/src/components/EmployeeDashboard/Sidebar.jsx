@@ -1,3 +1,4 @@
+import {useState} from "react";
 import {NavLink} from "react-router-dom";
 import {
     FaCalendarAlt,
@@ -5,14 +6,18 @@ import {
     FaTachometerAlt,
     FaUsers,
     FaCogs,
-    FaSignOutAlt
+    FaSignOutAlt,
+    FaChevronDown,
+    FaChevronUp
 } from "react-icons/fa";
 import {useAuth} from "../../context/authContext";
 
 const Sidebar = () => {
     const {user, logout} = useAuth();
+    const [isTeamManagementOpen, setIsTeamManagementOpen] = useState(true);
+    const [isMyDetailsOpen, setIsMyDetailsOpen] = useState(true);
 
-    return (<div className="bg-gray-900 text-white h-screen fixed left-0 top-0 bottom-0 w-20 md:w-64 flex flex-col justify-between"> {/* Header */}
+    return (<div className="bg-gray-900 text-white h-screen fixed left-0 top-0 bottom-0 w-20 md:w-64 flex flex-col justify-between overflow-y-auto hidden-scrollbar"> {/* Header */}
         <div>
             <div className="bg-teal-600 h-16 flex flex-col items-center justify-center space-y-1">
                 <h3 className="text-xl font-pacific hidden md:block">Employee MS</h3>
@@ -35,61 +40,73 @@ const Sidebar = () => {
                     <span className="hidden md:inline">Dashboard</span>
                 </NavLink>
 
-                <NavLink to={
-                        `/employee-dashboard/profile/${
-                            user._id
-                        }`
-                    }
-                    className={
-                        ({isActive}) => `${
-                            isActive ? "bg-teal-500" : "hover:bg-gray-700"
-                        } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-                }>
-                    <FaUsers/>
-                    <span className="hidden md:inline">My Profile</span>
-                </NavLink>
+                {user.role === "manager" && (
+                    <div 
+                        className="items-center justify-between border-t border-gray-700 my-2 pt-2 px-3 text-xs text-gray-400 cursor-pointer hidden md:flex hover:text-white transition-colors"
+                        onClick={() => setIsMyDetailsOpen(!isMyDetailsOpen)}
+                    >
+                        <span>My Details</span>
+                        {isMyDetailsOpen ? <FaChevronUp size={10} /> : <FaChevronDown size={10} />}
+                    </div>
+                )}
 
-                <NavLink to={
-                        `/employee-dashboard/leaves/${
-                            user._id
-                        }`
-                    }
-                    className={
-                        ({isActive}) => `${
-                            isActive ? "bg-teal-500" : "hover:bg-gray-700"
-                        } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-                }>
-                    <FaCalendarAlt/>
-                    <span className="hidden md:inline">Leaves</span>
-                </NavLink>
+                <div className={`space-y-2 ${user.role === "manager" && !isMyDetailsOpen ? 'hidden md:hidden' : 'block'}`}>
+                    <NavLink to={
+                            `/employee-dashboard/profile/${
+                                user._id
+                            }`
+                        }
+                        className={
+                            ({isActive}) => `${
+                                isActive ? "bg-teal-500" : "hover:bg-gray-700"
+                            } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
+                    }>
+                        <FaUsers/>
+                        <span className="hidden md:inline">My Profile</span>
+                    </NavLink>
 
-                <NavLink to={
-                        `/employee-dashboard/attendance/${
-                            user._id
-                        }`
-                    }
-                    className={
-                        ({isActive}) => `${
-                            isActive ? "bg-teal-500" : "hover:bg-gray-700"
-                        } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-                }>
-                    <FaCalendarAlt/>
-                    <span className="hidden md:inline">Attendance</span>
-                </NavLink>
+                    <NavLink to={
+                            `/employee-dashboard/leaves/${
+                                user._id
+                            }`
+                        }
+                        className={
+                            ({isActive}) => `${
+                                isActive ? "bg-teal-500" : "hover:bg-gray-700"
+                            } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
+                    }>
+                        <FaCalendarAlt/>
+                        <span className="hidden md:inline">Leaves</span>
+                    </NavLink>
 
-                <NavLink to={
-                        `/employee-dashboard/salary/${
-                            user._id
-                        }`
-                    }
-                    className={
-                        ({isActive}) => `${
-                            isActive ? "bg-teal-500" : "hover:bg-gray-700"
-                        } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-                }>
-                    <FaMoneyBillWave/>
-                    <span className="hidden md:inline">Salary</span>
-                </NavLink>
+                    <NavLink to={
+                            `/employee-dashboard/attendance/${
+                                user._id
+                            }`
+                        }
+                        className={
+                            ({isActive}) => `${
+                                isActive ? "bg-teal-500" : "hover:bg-gray-700"
+                            } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
+                    }>
+                        <FaCalendarAlt/>
+                        <span className="hidden md:inline">Attendance</span>
+                    </NavLink>
+
+                    <NavLink to={
+                            `/employee-dashboard/salary/${
+                                user._id
+                            }`
+                        }
+                        className={
+                            ({isActive}) => `${
+                                isActive ? "bg-teal-500" : "hover:bg-gray-700"
+                            } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
+                    }>
+                        <FaMoneyBillWave/>
+                        <span className="hidden md:inline">Salary</span>
+                    </NavLink>
+                </div>
 
                 <NavLink to="/employee-dashboard/setting"
                     className={
@@ -104,27 +121,33 @@ const Sidebar = () => {
                 {/* Manager Specific Links */}
                 {
                 user.role === "manager" && (<>
-                    <div className="border-t border-gray-700 my-2 pt-2 px-3 text-xs text-gray-400 hidden md:block">
-                        Team Management
+                    <div 
+                        className="items-center justify-between border-t border-gray-700 my-2 pt-2 px-3 text-xs text-gray-400 cursor-pointer hidden md:flex hover:text-white transition-colors"
+                        onClick={() => setIsTeamManagementOpen(!isTeamManagementOpen)}
+                    >
+                        <span>Team Management</span>
+                        {isTeamManagementOpen ? <FaChevronUp size={10} /> : <FaChevronDown size={10} />}
                     </div>
-                    <NavLink to="/admin-dashboard/leaves"
-                        className={
-                            ({isActive}) => `${
-                                isActive ? "bg-teal-500" : "hover:bg-gray-700"
-                            } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-                    }>
-                        <FaCalendarAlt/>
-                        <span className="hidden md:inline">Team Leaves</span>
-                    </NavLink>
-                    <NavLink to="/admin-dashboard/attendance"
-                        className={
-                            ({isActive}) => `${
-                                isActive ? "bg-teal-500" : "hover:bg-gray-700"
-                            } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
-                    }>
-                        <FaCalendarAlt/>
-                        <span className="hidden md:inline">Team Attendance</span>
-                    </NavLink>
+                    <div className={`space-y-2 ${isTeamManagementOpen ? 'block' : 'block md:hidden'}`}>
+                        <NavLink to="/admin-dashboard/leaves"
+                            className={
+                                ({isActive}) => `${
+                                    isActive ? "bg-teal-500" : "hover:bg-gray-700"
+                                } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
+                        }>
+                            <FaCalendarAlt/>
+                            <span className="hidden md:inline">Leaves</span>
+                        </NavLink>
+                        <NavLink to="/admin-dashboard/attendance"
+                            className={
+                                ({isActive}) => `${
+                                    isActive ? "bg-teal-500" : "hover:bg-gray-700"
+                                } flex items-center justify-center md:justify-start space-x-3 py-2 px-3 rounded`
+                        }>
+                            <FaCalendarAlt/>
+                            <span className="hidden md:inline">Attendance</span>
+                        </NavLink>
+                    </div>
                 </>)
             } </div>
         </div>
