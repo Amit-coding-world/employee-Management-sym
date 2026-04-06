@@ -2,20 +2,38 @@ import {useEffect, useState} from "react";
 import {fetchDepartments} from "../../utils/EmployeeHelper";
 import api, {BASE_URL} from "../../utils/api";
 import {useNavigate, useParams} from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import Loading from "../Loading";
+
+const editManagerSchema = z.object({
+    name: z.string().min(1, "Name is required").regex(/^[a-zA-Z\s]+$/, "Name must contain only letters"),
+    maritalStatus: z.enum(["single", "married"], { required_error: "Marital status is required" }),
+    designation: z.string().min(1, "Designation is required").regex(/^[a-zA-Z\s]+$/, "Designation must contain only letters"),
+    department: z.string().min(1, "Department is required"),
+    salary: z.coerce.number({ required_error: "Salary is required", invalid_type_error: "Salary must be a number" }).positive("Salary must be a positive number"),
+});
 
 const Edit = () => {
     const [employee, setEmployee] = useState({
-        name: "",
-        maritalStatus: "",
-        designation: "",
-        salary: "",
-        department: ""
+        profileImage: "",
+        image: null
     });
     const [departments, setDepartments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [submitError, setSubmitError] = useState("");
     const navigate = useNavigate();
     const {id} = useParams();
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting }
+    } = useForm({
+        resolver: zodResolver(editManagerSchema)
+    });
 
     useEffect(() => {
         const getDepartments = async () => {
@@ -32,12 +50,16 @@ const Edit = () => {
                 if (response.data.success) {
                     const emp = response.data.employee;
                     setEmployee({
+                        profileImage: emp ?. userId ?. profileImage || "",
+                        image: null
+                    });
+                    
+                    reset({
                         name: emp ?. userId ?. name || "",
                         maritalStatus: emp.maritalStatus || "",
                         designation: emp.designation || "",
                         salary: emp.salary || "",
                         department: emp.department ?. _id || emp.department || "",
-                        profileImage: emp ?. userId ?. profileImage || ""
                     });
                 }
             } catch (error) {
@@ -50,19 +72,14 @@ const Edit = () => {
             }
         };
         fetchEmployee();
-    }, [id]);
+    }, [id, reset]);
 
-    const handleChange = (e) => {
-        const {name, value, files} = e.target;
-        if (name === "image") {
+    const handleImageChange = (e) => {
+        const {files} = e.target;
+        if (files && files[0]) {
             setEmployee((prev) => ({
                 ...prev,
-                [name]: files[0]
-            }));
-        } else {
-            setEmployee((prev) => ({
-                ...prev,
-                [name]: value
+                image: files[0]
             }));
         }
     };
@@ -79,12 +96,16 @@ const Edit = () => {
         return "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const onSubmit = async (data) => {
+        setSubmitError("");
         const formDataObj = new FormData();
-        Object.keys(employee).forEach((key) => {
-            formDataObj.append(key, employee[key]);
+        Object.keys(data).forEach((key) => {
+            formDataObj.append(key, data[key]);
         });
+        
+        if (employee.image) {
+            formDataObj.append("image", employee.image);
+        }
 
         try {
             const response = await api.put(`/employee/${id}`, formDataObj);
@@ -94,7 +115,9 @@ const Edit = () => {
         } catch (error) {
             console.error(error.message);
             if (error.response && !error.response.data.success) {
-                alert(error.response.data.error || "Update failed");
+                setSubmitError(error.response.data.error || error.response.data.message || "Update failed");
+            } else {
+                setSubmitError("Failed to connect to the server.");
             }
         }
     };
@@ -114,65 +137,59 @@ const Edit = () => {
 
             <h2 className="text-2xl font-bold mb-6 text-center text-teal-600">Edit Manager</h2>
 
-            <form onSubmit={handleSubmit}>
+            {submitError && (
+                <div className="mb-6 p-4 bg-red-50 text-red-700 border-l-4 border-red-500 rounded-r-md shadow-sm flex items-center">
+                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {submitError}
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Name</label>
-                        <input type="text" name="name"
-                            value={
-                                employee.name
-                            }
-                            onChange={handleChange}
-                            required
-                            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"/>
+                        <input type="text"
+                            {...register("name")}
+                            className={`mt-1 p-2 block w-full border rounded-md ${errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}/>
+                        {errors.name && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.name.message}</p>}
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Marital Status</label>
-                        <select name="maritalStatus"
-                            value={
-                                employee.maritalStatus
-                            }
-                            onChange={handleChange}
-                            required
-                            className="mt-1 p-2 block w-full border border-gray-300 rounded-md">
+                        <select
+                            {...register("maritalStatus")}
+                            className={`mt-1 p-2 block w-full border rounded-md bg-white ${errors.maritalStatus ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}>
                             <option value="">Select Status</option>
                             <option value="single">Single</option>
                             <option value="married">Married</option>
                         </select>
+                        {errors.maritalStatus && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.maritalStatus.message}</p>}
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Designation</label>
-                        <input type="text" name="designation"
-                            value={
-                                employee.designation
-                            }
-                            onChange={handleChange}
-                            required
-                            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"/>
+                        <input type="text"
+                            {...register("designation")}
+                            className={`mt-1 p-2 block w-full border rounded-md ${errors.designation ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}/>
+                        {errors.designation && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.designation.message}</p>}
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Salary</label>
-                        <input type="number" name="salary"
-                            value={
-                                employee.salary
-                            }
-                            onChange={handleChange}
-                            required
-                            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"/>
+                        <input type="number"
+                            min="0"
+                            {...register("salary")}
+                            className={`mt-1 p-2 block w-full border rounded-md ${errors.salary ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}/>
+                        {errors.salary && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.salary.message}</p>}
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Department</label>
-                        <select name="department"
-                            value={
-                                employee.department
-                            }
-                            onChange={handleChange}
-                            required
-                            className="mt-1 p-2 block w-full border border-gray-300 rounded-md">
+                        <select
+                            {...register("department")}
+                            className={`mt-1 p-2 block w-full border rounded-md bg-white ${errors.department ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}>
                             <option value="">Select Department</option>
                             {
                             departments.map((dep) => (
@@ -187,6 +204,7 @@ const Edit = () => {
                                 }</option>
                             ))
                         } </select>
+                        {errors.department && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.department.message}</p>}
                     </div>
 
                     <div className="flex flex-col items-center justify-center p-4 border rounded-md bg-gray-50">
@@ -201,14 +219,16 @@ const Edit = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Upload New Image</label>
                         <input type="file" name="image"
-                            onChange={handleChange}
+                            onChange={handleImageChange}
                             accept="image/*"
                             className="mt-1 p-2 block w-full border border-gray-300 rounded-md"/>
                     </div>
                 </div>
 
-                <button type="submit" className="w-full mt-6 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
-                    Update Manager
+                <button type="submit" 
+                    disabled={isSubmitting}
+                    className={`w-full mt-6 text-white font-bold py-2 px-4 rounded-md transition-colors ${isSubmitting ? 'bg-teal-400 cursor-not-allowed' : 'bg-teal-600 hover:bg-teal-700'}`}>
+                    {isSubmitting ? 'Updating Manager...' : 'Update Manager'}
                 </button>
             </form>
         </div>
