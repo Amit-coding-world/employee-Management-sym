@@ -32,25 +32,38 @@ export const columns = [
 
 import {useAuth} from "../context/authContext";
 
-export const ManagerButtons = ({_id, onManagerDelete}) => {
+export const ManagerButtons = ({_id, userId, onManagerDelete}) => {
     const navigate = useNavigate();
     const {user} = useAuth();
+    
+    // Check if the current user is a manager and not the owner of this record
+    const isDisabled = user && user.role === "manager" && user._id !== userId;
+
     return (
         <div className="flex space-x-3">
             <button className="px-3 py-1 bg-teal-600 text-white rounded hover:bg-teal-700 transition"
                 onClick={() => navigate(`/admin-dashboard/managers/${_id}`)}>
                 View
             </button>
-            <button className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
-                onClick={() => navigate(`/admin-dashboard/managers/edit/${_id}`)}>
+            <button 
+                className={`px-3 py-1 text-white rounded transition ${isDisabled ? 'bg-yellow-300 cursor-not-allowed opacity-50' : 'bg-yellow-500 hover:bg-yellow-600'}`}
+                onClick={() => !isDisabled && navigate(`/admin-dashboard/managers/edit/${_id}`)}
+                disabled={isDisabled}
+            >
                 Edit
             </button>
-            <button className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
-                onClick={() => navigate(`/admin-dashboard/employees/salary/${_id}`)}>
+            <button 
+                className={`px-3 py-1 text-white rounded transition ${isDisabled ? 'bg-red-300 cursor-not-allowed opacity-50' : 'bg-red-600 hover:bg-red-700'}`}
+                onClick={() => !isDisabled && navigate(`/admin-dashboard/employees/salary/${_id}`)}
+                disabled={isDisabled}
+            >
                 Salary
             </button>
-            <button className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
-                onClick={() => navigate(`/admin-dashboard/leaves/add/${_id}`)}>
+            <button 
+                className={`px-3 py-1 text-white rounded transition ${isDisabled ? 'bg-purple-300 cursor-not-allowed opacity-50' : 'bg-purple-600 hover:bg-purple-700'}`}
+                onClick={() => !isDisabled && navigate(`/admin-dashboard/leaves/add/${_id}`)}
+                disabled={isDisabled}
+            >
                 Leave
             </button>
             {user && user.role === "admin" && (

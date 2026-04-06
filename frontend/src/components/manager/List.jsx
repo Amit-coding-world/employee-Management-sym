@@ -49,7 +49,7 @@ const List = () => {
                                 emp ?. userId ?. name || "Manager"
                             }/>
                     ),
-                    action: <ManagerButtons _id={emp._id} onManagerDelete={onManagerDelete} />
+                    action: <ManagerButtons _id={emp._id} userId={emp.userId._id} onManagerDelete={onManagerDelete} />
                 }));
                 setManagers(data);
                 setFilteredManagers(data);
