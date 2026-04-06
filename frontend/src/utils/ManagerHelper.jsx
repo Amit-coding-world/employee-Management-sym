@@ -30,8 +30,11 @@ export const columns = [
     },
 ];
 
+import {useAuth} from "../context/authContext";
+
 export const ManagerButtons = ({_id, onManagerDelete}) => {
     const navigate = useNavigate();
+    const {user} = useAuth();
     return (
         <div className="flex space-x-3">
             <button className="px-3 py-1 bg-teal-600 text-white rounded hover:bg-teal-700 transition"
@@ -50,10 +53,12 @@ export const ManagerButtons = ({_id, onManagerDelete}) => {
                 onClick={() => navigate(`/admin-dashboard/leaves/add/${_id}`)}>
                 Leave
             </button>
-            <button className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition"
-                onClick={() => onManagerDelete(_id)}>
-                Delete
-            </button>
+            {user && user.role === "admin" && (
+                <button className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition"
+                    onClick={() => onManagerDelete(_id)}>
+                    Delete
+                </button>
+            )}
         </div>
     );
 };
